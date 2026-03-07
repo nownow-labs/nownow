@@ -14,6 +14,7 @@ import (
 
 	"github.com/nownow-labs/nownow/internal/api"
 	"github.com/nownow-labs/nownow/internal/config"
+	"github.com/nownow-labs/nownow/internal/daemon"
 	"github.com/spf13/cobra"
 )
 
@@ -66,6 +67,8 @@ func loginWithToken(token string) error {
 
 	p, _ := config.Path()
 	fmt.Printf("Token saved to %s\n", p)
+
+	startDaemon()
 	return nil
 }
 
@@ -149,8 +152,22 @@ func loginWithDeviceFlow() error {
 		}
 
 		fmt.Printf("Logged in as %s\n", tokenResp.User.Name)
+
+		startDaemon()
 		return nil
 	}
+}
+
+func startDaemon() {
+	// Stop existing daemon if running (may have old token)
+	if running, _ := daemon.IsRunning(); running {
+		daemon.Stop()
+	}
+
+	if err := daemon.StartDetached(); err != nil {
+		return
+	}
+	daemon.InstallAutostart()
 }
 
 // waitWithContext waits for the given duration or until the context is cancelled.
