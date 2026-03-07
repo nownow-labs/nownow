@@ -74,8 +74,10 @@ func onReady(interval time.Duration) {
 				if paused {
 					mPause.SetTitle("Resume")
 					mStatus.SetTitle("paused")
+					systray.SetTitle("⏸")
 				} else {
 					mPause.SetTitle("Pause")
+					systray.SetTitle("")
 					pushAndUpdate()
 				}
 				mu.Unlock()

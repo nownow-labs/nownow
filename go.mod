@@ -2,6 +2,8 @@ module github.com/nownow-labs/nownow
 
 go 1.25.6
 
+replace fyne.io/systray => ./_patches/systray
+
 require (
 	fyne.io/systray v1.12.0
 	github.com/spf13/cobra v1.10.2
