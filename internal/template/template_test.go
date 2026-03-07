@@ -3,7 +3,7 @@ package template
 import (
 	"testing"
 
-	"github.com/ctx-st/nownow/internal/detect"
+	"github.com/nownow-labs/nownow/internal/detect"
 )
 
 func TestRender(t *testing.T) {
@@ -59,9 +59,9 @@ func TestRender(t *testing.T) {
 		{
 			name:  "custom template with title",
 			tmpl:  "{app}: {title}",
-			ctx:   detect.Context{App: "Chrome", WindowTitle: "GitHub - ctx-st/nownow"},
+			ctx:   detect.Context{App: "Chrome", WindowTitle: "GitHub - nownow-labs/nownow"},
 			emoji: "",
-			want:  "Chrome: GitHub - ctx-st/nownow",
+			want:  "Chrome: GitHub - nownow-labs/nownow",
 		},
 		{
 			name:  "music subfields",

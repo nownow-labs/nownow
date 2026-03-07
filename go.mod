@@ -1,4 +1,4 @@
-module github.com/ctx-st/nownow
+module github.com/nownow-labs/nownow
 
 go 1.25.6
 

@@ -12,11 +12,11 @@ brew install biao29/tap/nownow
 curl -fsSL https://now.ctx.st/install.sh | sh
 
 # Windows
-scoop bucket add biao29 https://github.com/biao29/scoop-bucket
+scoop bucket add nownow-labs https://github.com/nownow-labs/scoop-bucket
 scoop install nownow
 
 # From source
-go install github.com/ctx-st/nownow@latest
+go install github.com/nownow-labs/nownow@latest
 ```
 
 ## Quick Start

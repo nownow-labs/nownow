@@ -3,7 +3,7 @@ package template
 import (
 	"strings"
 
-	"github.com/ctx-st/nownow/internal/detect"
+	"github.com/nownow-labs/nownow/internal/detect"
 )
 
 // Render takes a template string and a Context, returning the rendered status.

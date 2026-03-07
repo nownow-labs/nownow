@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ctx-st/nownow/cmd"
+	"github.com/nownow-labs/nownow/cmd"
 )
 
 func main() {

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ctx-st/nownow/internal/api"
-	"github.com/ctx-st/nownow/internal/config"
-	"github.com/ctx-st/nownow/internal/detect"
-	"github.com/ctx-st/nownow/internal/template"
+	"github.com/nownow-labs/nownow/internal/api"
+	"github.com/nownow-labs/nownow/internal/config"
+	"github.com/nownow-labs/nownow/internal/detect"
+	"github.com/nownow-labs/nownow/internal/template"
 	"github.com/spf13/cobra"
 )
 

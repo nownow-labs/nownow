@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/ctx-st/nownow/internal/api"
-	"github.com/ctx-st/nownow/internal/config"
+	"github.com/nownow-labs/nownow/internal/api"
+	"github.com/nownow-labs/nownow/internal/config"
 	"github.com/spf13/cobra"
 )
 
