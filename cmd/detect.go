@@ -41,9 +41,6 @@ var detectCmd = &cobra.Command{
 		if ctx.HasMusic() {
 			fmt.Printf("music:   %s\n", ctx.Music())
 		}
-		if ctx.HasWatching() {
-			fmt.Printf("watching: %s\n", ctx.Watching)
-		}
 		return nil
 	},
 }

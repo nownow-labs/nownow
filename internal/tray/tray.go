@@ -200,14 +200,7 @@ func pushAndUpdate() {
 	client := api.NewClient(cfg.Endpoint, cfg.Token)
 	client.Version = Version
 	client.Telemetry = cfg.TelemetryEnabled()
-	err = client.PushStatus(api.StatusRequest{
-		Content:     content,
-		Emoji:       emoji,
-		App:         ctx.App,
-		MusicArtist: ctx.MusicArtist,
-		MusicTrack:  ctx.MusicTrack,
-		Watching:    ctx.Watching,
-	})
+	err = client.PushStatus(content, emoji, ctx.App)
 	if err != nil {
 		var rle *api.RateLimitError
 		if errors.As(err, &rle) {
