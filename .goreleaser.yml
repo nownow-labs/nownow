@@ -16,21 +16,8 @@ builds:
       - arm64
 
 archives:
-  - format: tar.gz
+  - formats: ['tar.gz']
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
-    format_overrides:
-      - goos: windows
-        format: zip
-
-brews:
-  - repository:
-      owner: biao29
-      name: homebrew-tap
-    name: nownow
-    homepage: "https://now.ctx.st"
-    description: "Keep your now.ctx.st status green"
-    install: |
-      bin.install "nownow"
 
 changelog:
   sort: asc
