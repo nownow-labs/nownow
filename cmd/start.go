@@ -1,25 +1,23 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
-	"github.com/nownow-labs/nownow/internal/api"
 	"github.com/nownow-labs/nownow/internal/config"
-	"github.com/nownow-labs/nownow/internal/detect"
-	"github.com/nownow-labs/nownow/internal/template"
+	"github.com/nownow-labs/nownow/internal/daemon"
 	"github.com/spf13/cobra"
 )
 
-var startInterval string
+var (
+	startInterval   string
+	startForeground bool
+	startNoAutostart bool
+)
 
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "Watch and auto-push status on an interval",
+	Short: "Start the nownow daemon (background by default)",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.Load()
 		if err != nil {
@@ -38,67 +36,32 @@ var startCmd = &cobra.Command{
 			return fmt.Errorf("invalid interval %q: %w", intervalStr, err)
 		}
 
-		client := api.NewClient(cfg.Endpoint, cfg.Token)
+		if startForeground {
+			// Run in foreground (used by detached process and launchd)
+			return daemon.RunForeground(interval)
+		}
 
-		fmt.Printf("nownow watching (every %s) — Ctrl+C to stop\n", interval)
+		// Launch as background daemon
+		if err := daemon.StartDetached(); err != nil {
+			return err
+		}
 
-		// Run once immediately
-		pushOnce(cfg, client)
-
-		ticker := time.NewTicker(interval)
-		defer ticker.Stop()
-
-		sig := make(chan os.Signal, 1)
-		signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-
-		for {
-			select {
-			case <-ticker.C:
-				pushOnce(cfg, client)
-			case <-sig:
-				fmt.Println("\nstopping")
-				return nil
+		// Install autostart on first run
+		if !startNoAutostart {
+			if err := daemon.InstallAutostart(); err != nil {
+				// Non-fatal — just warn
+				fmt.Printf("note: autostart setup skipped (%s)\n", err)
 			}
 		}
+
+		return nil
 	},
-}
-
-func pushOnce(cfg config.Config, client *api.Client) {
-	ctx := detect.Detect()
-
-	if cfg.IsIgnored(ctx.App) {
-		return
-	}
-
-	emoji := cfg.EmojiFor(ctx.App, "")
-	if ctx.HasMusic() && emoji == "" {
-		emoji = "\U0001F3B5"
-	}
-
-	content := template.Render(cfg.Template, ctx, emoji)
-	if content == "" {
-		return
-	}
-
-	err := client.PushStatus(content, emoji)
-	if err != nil {
-		var rle *api.RateLimitError
-		if errors.As(err, &rle) {
-			fmt.Printf("[%s] rate limited, waiting %s\n", timeNow(), rle.RetryAfter)
-			time.Sleep(rle.RetryAfter)
-			return
-		}
-		fmt.Printf("[%s] push error: %s\n", timeNow(), err)
-		return
-	}
-	fmt.Printf("[%s] %s\n", timeNow(), content)
-}
-
-func timeNow() string {
-	return time.Now().Format("15:04:05")
 }
 
 func init() {
 	startCmd.Flags().StringVar(&startInterval, "interval", "", "push interval (default from config, e.g. 5m)")
+	startCmd.Flags().BoolVar(&startForeground, "foreground", false, "run in foreground (used internally)")
+	startCmd.Flags().BoolVar(&startNoAutostart, "no-autostart", false, "skip autostart installation")
+	startCmd.Flags().MarkHidden("foreground")
 	rootCmd.AddCommand(startCmd)
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/nownow-labs/nownow/internal/api"
 	"github.com/nownow-labs/nownow/internal/config"
+	"github.com/nownow-labs/nownow/internal/daemon"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +19,13 @@ var statusCmd = &cobra.Command{
 		}
 		if !cfg.HasToken() {
 			return fmt.Errorf("not logged in — run: nownow login")
+		}
+
+		// Daemon status
+		if running, pid := daemon.IsRunning(); running {
+			fmt.Printf("daemon: running (pid %d)\n", pid)
+		} else {
+			fmt.Println("daemon: not running")
 		}
 
 		client := api.NewClient(cfg.Endpoint, cfg.Token)
