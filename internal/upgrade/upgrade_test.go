@@ -62,9 +62,13 @@ func TestFindAsset(t *testing.T) {
 	release := &Release{
 		TagName: "v0.3.0",
 		Assets: []Asset{
-			{Name: "nownow_darwin_amd64.tar.gz", BrowserDownloadURL: "https://example.com/amd64"},
-			{Name: "nownow_darwin_arm64.tar.gz", BrowserDownloadURL: "https://example.com/arm64"},
-			{Name: "nownow_0.3.0_checksums.txt", BrowserDownloadURL: "https://example.com/checksums"},
+			{Name: "nownow_darwin_amd64.tar.gz", BrowserDownloadURL: "https://example.com/darwin_amd64"},
+			{Name: "nownow_darwin_arm64.tar.gz", BrowserDownloadURL: "https://example.com/darwin_arm64"},
+			{Name: "nownow_linux_amd64.tar.gz", BrowserDownloadURL: "https://example.com/linux_amd64"},
+			{Name: "nownow_linux_arm64.tar.gz", BrowserDownloadURL: "https://example.com/linux_arm64"},
+			{Name: "nownow_windows_amd64.zip", BrowserDownloadURL: "https://example.com/windows_amd64"},
+			{Name: "nownow_windows_arm64.zip", BrowserDownloadURL: "https://example.com/windows_arm64"},
+			{Name: "checksums.txt", BrowserDownloadURL: "https://example.com/checksums"},
 		},
 	}
 
@@ -81,7 +85,7 @@ func TestFindAssetNoMatch(t *testing.T) {
 	release := &Release{
 		TagName: "v0.3.0",
 		Assets: []Asset{
-			{Name: "nownow_linux_amd64.tar.gz"},
+			{Name: "nownow_freebsd_riscv64.tar.gz"},
 		},
 	}
 
