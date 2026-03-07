@@ -7,9 +7,9 @@ import (
 )
 
 // Render takes a template string and a Context, returning the rendered status.
-// Supported placeholders: {app}, {music}, {music.artist}, {music.track}, {title}, {emoji}, {watching}
+// Supported placeholders: {app}, {music}, {music.artist}, {music.track}, {title}, {activity}, {watching}
 // Empty placeholders are removed, and separators around them are cleaned up.
-func Render(tmpl string, ctx detect.Context, emoji string) string {
+func Render(tmpl string, ctx detect.Context, activity string) string {
 	replacements := map[string]string{
 		"{app}":          ctx.App,
 		"{title}":        ctx.WindowTitle,
@@ -17,7 +17,7 @@ func Render(tmpl string, ctx detect.Context, emoji string) string {
 		"{music.artist}": ctx.MusicArtist,
 		"{music.track}":  ctx.MusicTrack,
 		"{watching}":     ctx.Watching,
-		"{emoji}":        emoji,
+		"{activity}":     activity,
 	}
 
 	result := tmpl

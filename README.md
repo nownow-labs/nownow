@@ -53,20 +53,20 @@ Config lives at `~/.config/nownow/config.yml`:
 endpoint: https://now.ctx.st
 token: now_xxx
 
-# Status template — available: {app}, {title}, {music}, {music.artist}, {music.track}, {watching}, {emoji}
-template: "{emoji} {app}"
+# Status template — available: {app}, {title}, {music}, {music.artist}, {music.track}, {watching}, {activity}
+template: "{activity}"
 
 # Watch interval
 interval: 30s
 
-# Emoji mapping (substring match, case-insensitive)
-emoji_rules:
-  - match: "Code"
-    emoji: "💻"
-  - match: "Terminal"
-    emoji: "⚡"
-  - match: "Figma"
-    emoji: "🎨"
+# Activity rules (exact match, case-insensitive)
+activity_rules:
+  - match: ["Visual Studio Code", "Code", "Cursor", "Windsurf", "Zed"]
+    activity: "Coding"
+  - match: ["Terminal", "iTerm2", "Warp", "Alacritty", "kitty"]
+    activity: "In terminal"
+  - match: ["Google Chrome", "Safari", "Arc", "Firefox", "Brave Browser"]
+    activity: "Browsing"
 
 # Apps to ignore
 ignore:

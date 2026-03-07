@@ -69,7 +69,6 @@ func TestPushStatus(t *testing.T) {
 	client := NewClient(server.URL, "now_test")
 	err := client.PushStatus(StatusRequest{
 		Content:     "coding in Go",
-		Emoji:       "\U0001F4BB",
 		App:         "VSCode",
 		MusicArtist: "Daft Punk",
 		MusicTrack:  "Get Lucky",
@@ -79,9 +78,6 @@ func TestPushStatus(t *testing.T) {
 	}
 	if received.Content != "coding in Go" {
 		t.Errorf("content = %q, want %q", received.Content, "coding in Go")
-	}
-	if received.Emoji != "\U0001F4BB" {
-		t.Errorf("emoji = %q, want %q", received.Emoji, "\U0001F4BB")
 	}
 	if received.App != "VSCode" {
 		t.Errorf("app = %q, want %q", received.App, "VSCode")

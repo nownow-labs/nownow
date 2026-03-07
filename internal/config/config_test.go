@@ -13,13 +13,13 @@ func TestDefaultConfig(t *testing.T) {
 		t.Errorf("expected endpoint https://now.ctx.st, got %s", cfg.Endpoint)
 	}
 	if cfg.Interval != "30s" {
-		t.Errorf("expected interval 5m, got %s", cfg.Interval)
+		t.Errorf("expected interval 30s, got %s", cfg.Interval)
 	}
 	if cfg.Template == "" {
 		t.Error("expected non-empty template")
 	}
-	if len(cfg.EmojiRules) == 0 {
-		t.Error("expected default emoji rules")
+	if len(cfg.ActivityRules) == 0 {
+		t.Error("expected default activity rules")
 	}
 }
 
@@ -45,30 +45,70 @@ func TestIsIgnored(t *testing.T) {
 	}
 }
 
-func TestEmojiFor(t *testing.T) {
+func TestActivityFor(t *testing.T) {
 	cfg := DefaultConfig()
 
 	tests := []struct {
-		app      string
-		fallback string
-		want     string
+		app  string
+		want string
 	}{
-		{"Visual Studio Code", "", "\U0001F4BB"},
-		{"Cursor", "", "\U0001F4BB"},
-		{"iTerm2", "", "\u26A1"},
-		{"Terminal", "", "\u26A1"},
-		{"Google Chrome", "", "\U0001F310"},
-		{"Figma", "", "\U0001F3A8"},
-		{"Slack", "", "\U0001F4AC"},
-		{"Unknown App", "🔧", "🔧"},
-		{"Unknown App", "", ""},
+		{"Visual Studio Code", "Coding"},
+		{"Code", "Coding"},
+		{"iTerm2", "In terminal"},
+		{"Google Chrome", "Browsing"},
+		{"Unknown App", ""},
+		{"Codeium", ""},
 	}
 
 	for _, tt := range tests {
-		got := cfg.EmojiFor(tt.app, tt.fallback)
+		got := cfg.ActivityFor(tt.app)
 		if got != tt.want {
-			t.Errorf("EmojiFor(%q, %q) = %q, want %q", tt.app, tt.fallback, got, tt.want)
+			t.Errorf("ActivityFor(%q) = %q, want %q", tt.app, got, tt.want)
 		}
+	}
+}
+
+func TestActivityForCaseInsensitive(t *testing.T) {
+	cfg := DefaultConfig()
+
+	got := cfg.ActivityFor("code")
+	if got != "Coding" {
+		t.Errorf("ActivityFor(%q) = %q, want %q", "code", got, "Coding")
+	}
+
+	got = cfg.ActivityFor("SAFARI")
+	if got != "Browsing" {
+		t.Errorf("ActivityFor(%q) = %q, want %q", "SAFARI", got, "Browsing")
+	}
+}
+
+func TestResolveActivity(t *testing.T) {
+	cfg := DefaultConfig()
+
+	tests := []struct {
+		name     string
+		app      string
+		watching string
+		music    string
+		want     string
+	}{
+		{"watching overrides", "Safari", "Breaking Bad", "", "Watching: Breaking Bad"},
+		{"activity matched", "Code", "", "", "Coding"},
+		{"activity with music", "Code", "", "Daft Punk - Get Lucky", "Coding · Listening to Daft Punk - Get Lucky"},
+		{"no match fallback", "SomeApp", "", "", "Using SomeApp"},
+		{"no match with music", "SomeApp", "", "Queen - Radio Ga Ga", "Using SomeApp · Listening to Queen - Radio Ga Ga"},
+		{"watching ignores music", "Safari", "Stranger Things", "Daft Punk - Get Lucky", "Watching: Stranger Things"},
+		{"empty app", "", "", "", ""},
+		{"empty app with music", "", "", "Daft Punk - Get Lucky", ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := cfg.ResolveActivity(tt.app, tt.watching, tt.music)
+			if got != tt.want {
+				t.Errorf("ResolveActivity(%q, %q, %q) = %q, want %q", tt.app, tt.watching, tt.music, got, tt.want)
+			}
+		})
 	}
 }
 
@@ -176,11 +216,13 @@ func TestMigrateTemplate(t *testing.T) {
 		in   string
 		want string
 	}{
-		{"legacy full", "{emoji} {app} · {project} ({branch})", "{emoji} {app}"},
+		{"legacy full", "{emoji} {app} · {project} ({branch})", "{activity}"},
 		{"project only", "{app} · {project}", "{app}"},
 		{"branch only", "{app} ({branch})", "{app}"},
-		{"no legacy placeholders", "{emoji} {app}", "{emoji} {app}"},
+		{"legacy emoji app", "{emoji} {app}", "{activity}"},
 		{"legacy with music", "{app} · {project} · {music}", "{app} · {music}"},
+		{"emoji only", "{emoji}", "{activity}"},
+		{"no legacy placeholders", "{activity}", "{activity}"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -204,27 +246,7 @@ func TestLoadLegacyTemplate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Load: %v", err)
 	}
-	if cfg.Template != "{emoji} {app}" {
-		t.Errorf("legacy template not migrated: got %q, want %q", cfg.Template, "{emoji} {app}")
-	}
-}
-
-func TestContainsInsensitive(t *testing.T) {
-	tests := []struct {
-		s, sub string
-		want   bool
-	}{
-		{"Visual Studio Code", "Code", true},
-		{"visual studio code", "Code", true},
-		{"iTerm2", "iterm", true},
-		{"Something", "other", false},
-		{"", "x", false},
-		{"x", "", false},
-	}
-	for _, tt := range tests {
-		got := containsInsensitive(tt.s, tt.sub)
-		if got != tt.want {
-			t.Errorf("containsInsensitive(%q, %q) = %v, want %v", tt.s, tt.sub, got, tt.want)
-		}
+	if cfg.Template != "{activity}" {
+		t.Errorf("legacy template not migrated: got %q, want %q", cfg.Template, "{activity}")
 	}
 }

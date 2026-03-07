@@ -9,19 +9,19 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type EmojiRule struct {
-	Match string `yaml:"match"`
-	Emoji string `yaml:"emoji"`
+type ActivityRule struct {
+	Match    []string `yaml:"match"`
+	Activity string   `yaml:"activity"`
 }
 
 type Config struct {
-	Endpoint   string      `yaml:"endpoint"`
-	Token      string      `yaml:"token"`
-	Template   string      `yaml:"template"`
-	Interval   string      `yaml:"interval,omitempty"`
-	EmojiRules []EmojiRule `yaml:"emoji_rules,omitempty"`
-	Ignore     []string    `yaml:"ignore,omitempty"`
-	Telemetry  *bool       `yaml:"telemetry,omitempty"`
+	Endpoint      string         `yaml:"endpoint"`
+	Token         string         `yaml:"token"`
+	Template      string         `yaml:"template"`
+	Interval      string         `yaml:"interval,omitempty"`
+	ActivityRules []ActivityRule `yaml:"activity_rules,omitempty"`
+	Ignore        []string       `yaml:"ignore,omitempty"`
+	Telemetry     *bool          `yaml:"telemetry,omitempty"`
 }
 
 // TelemetryEnabled returns true unless explicitly disabled.
@@ -32,19 +32,15 @@ func (c Config) TelemetryEnabled() bool {
 func DefaultConfig() Config {
 	return Config{
 		Endpoint: "https://now.ctx.st",
-		Template: "{emoji} {app}",
+		Template: "{activity}",
 		Interval: "30s",
-		EmojiRules: []EmojiRule{
-			{Match: "Code", Emoji: "\U0001F4BB"},
-			{Match: "Cursor", Emoji: "\U0001F4BB"},
-			{Match: "Terminal", Emoji: "\u26A1"},
-			{Match: "iTerm", Emoji: "\u26A1"},
-			{Match: "Warp", Emoji: "\u26A1"},
-			{Match: "Figma", Emoji: "\U0001F3A8"},
-			{Match: "Safari", Emoji: "\U0001F310"},
-			{Match: "Chrome", Emoji: "\U0001F310"},
-			{Match: "Arc", Emoji: "\U0001F310"},
-			{Match: "Slack", Emoji: "\U0001F4AC"},
+		ActivityRules: []ActivityRule{
+			{Match: []string{"Visual Studio Code", "Code", "Cursor", "Windsurf", "Zed"}, Activity: "Coding"},
+			{Match: []string{"Terminal", "iTerm2", "Warp", "Alacritty", "kitty"}, Activity: "In terminal"},
+			{Match: []string{"Google Chrome", "Safari", "Arc", "Firefox", "Brave Browser", "Microsoft Edge"}, Activity: "Browsing"},
+			{Match: []string{"Figma", "Sketch"}, Activity: "Designing"},
+			{Match: []string{"Slack", "Discord", "Telegram", "WeChat", "Messages"}, Activity: "Chatting"},
+			{Match: []string{"Notion", "Obsidian", "Bear", "Notes"}, Activity: "Writing"},
 		},
 		Ignore: []string{"1Password", "System Preferences", "System Settings"},
 	}
@@ -99,7 +95,7 @@ func Load() (Config, error) {
 		cfg.Endpoint = "https://now.ctx.st"
 	}
 	if cfg.Template == "" {
-		cfg.Template = "{emoji} {app}"
+		cfg.Template = "{activity}"
 	}
 	if cfg.Interval == "" {
 		cfg.Interval = "30s"
@@ -149,47 +145,43 @@ func (c Config) IsIgnored(app string) bool {
 	return false
 }
 
-// EmojiFor returns the emoji for a given app name, or fallback if no match.
-func (c Config) EmojiFor(app string, fallback string) string {
-	for _, rule := range c.EmojiRules {
-		// Simple substring match
-		if containsInsensitive(app, rule.Match) {
-			return rule.Emoji
+// ActivityFor returns the activity label for a given app name via exact case-insensitive match.
+func (c Config) ActivityFor(app string) string {
+	for _, rule := range c.ActivityRules {
+		for _, m := range rule.Match {
+			if strings.EqualFold(app, m) {
+				return rule.Activity
+			}
 		}
 	}
-	return fallback
+	return ""
 }
 
-func containsInsensitive(s, substr string) bool {
-	// Simple case-insensitive contains using lowercase comparison
-	ls := toLower(s)
-	lsub := toLower(substr)
-	return len(lsub) > 0 && contains(ls, lsub)
-}
+// ResolveActivity builds the full activity string with watching/music context.
+// Priority: watching > matched activity > "Using {app}", with music appended when not watching.
+// Returns "" if no meaningful activity can be determined.
+func (c Config) ResolveActivity(app, watching, music string) string {
+	activity := c.ActivityFor(app)
 
-func toLower(s string) string {
-	b := make([]byte, len(s))
-	for i := range s {
-		c := s[i]
-		if c >= 'A' && c <= 'Z' {
-			c += 'a' - 'A'
-		}
-		b[i] = c
+	if watching != "" {
+		activity = "Watching: " + watching
+	} else if activity == "" && app != "" {
+		activity = "Using " + app
 	}
-	return string(b)
-}
 
-func contains(s, sub string) bool {
-	for i := 0; i <= len(s)-len(sub); i++ {
-		if s[i:i+len(sub)] == sub {
-			return true
-		}
+	if music != "" && watching == "" && activity != "" {
+		activity = activity + " · Listening to " + music
 	}
-	return false
+
+	return activity
 }
 
-// migrateTemplate strips removed {project}/{branch} placeholders from legacy templates.
+// migrateTemplate strips removed {project}/{branch} placeholders and legacy emoji references from templates.
 func migrateTemplate(tmpl string) string {
+	// Migrate legacy emoji placeholders to activity
+	tmpl = strings.ReplaceAll(tmpl, "{emoji} {app}", "{activity}")
+	tmpl = strings.ReplaceAll(tmpl, "{emoji}", "{activity}")
+
 	tmpl = strings.ReplaceAll(tmpl, "{project}", "")
 	tmpl = strings.ReplaceAll(tmpl, "{branch}", "")
 

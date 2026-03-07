@@ -187,12 +187,9 @@ func pushAndUpdate() {
 		return
 	}
 
-	emoji := cfg.EmojiFor(ctx.App, "")
-	if ctx.HasMusic() && emoji == "" {
-		emoji = "\U0001F3B5"
-	}
+	activity := cfg.ResolveActivity(ctx.App, ctx.Watching, ctx.Music())
 
-	content := template.Render(cfg.Template, ctx, emoji)
+	content := template.Render(cfg.Template, ctx, activity)
 	if content == "" {
 		return
 	}
@@ -202,7 +199,6 @@ func pushAndUpdate() {
 	client.Telemetry = cfg.TelemetryEnabled()
 	err = client.PushStatus(api.StatusRequest{
 		Content:     content,
-		Emoji:       emoji,
 		App:         ctx.App,
 		MusicArtist: ctx.MusicArtist,
 		MusicTrack:  ctx.MusicTrack,

@@ -8,80 +8,80 @@ import (
 
 func TestRender(t *testing.T) {
 	tests := []struct {
-		name  string
-		tmpl  string
-		ctx   detect.Context
-		emoji string
-		want  string
+		name     string
+		tmpl     string
+		ctx      detect.Context
+		activity string
+		want     string
 	}{
 		{
-			name:  "app with emoji",
-			tmpl:  "{emoji} {app}",
-			ctx:   detect.Context{App: "VS Code"},
-			emoji: "\U0001F4BB",
-			want:  "\U0001F4BB VS Code",
+			name:     "app with activity",
+			tmpl:     "{activity}",
+			ctx:      detect.Context{App: "VS Code"},
+			activity: "Coding",
+			want:     "Coding",
 		},
 		{
-			name:  "music template",
-			tmpl:  "{app} · {music}",
-			ctx:   detect.Context{App: "Spotify", MusicArtist: "Daft Punk", MusicTrack: "Get Lucky"},
-			emoji: "",
-			want:  "Spotify · Daft Punk - Get Lucky",
+			name:     "activity with app",
+			tmpl:     "{activity} · {app}",
+			ctx:      detect.Context{App: "VS Code"},
+			activity: "Coding",
+			want:     "Coding · VS Code",
 		},
 		{
-			name:  "empty context",
-			tmpl:  "{emoji} {app}",
-			ctx:   detect.Context{},
-			emoji: "",
-			want:  "",
+			name:     "music template",
+			tmpl:     "{app} · {music}",
+			ctx:      detect.Context{App: "Spotify", MusicArtist: "Daft Punk", MusicTrack: "Get Lucky"},
+			activity: "",
+			want:     "Spotify · Daft Punk - Get Lucky",
 		},
 		{
-			name:  "only emoji",
-			tmpl:  "{emoji} {app}",
-			ctx:   detect.Context{App: "Terminal"},
-			emoji: "\u26A1",
-			want:  "\u26A1 Terminal",
+			name:     "empty context",
+			tmpl:     "{activity}",
+			ctx:      detect.Context{},
+			activity: "",
+			want:     "",
 		},
 		{
-			name:  "custom template with title",
-			tmpl:  "{app}: {title}",
-			ctx:   detect.Context{App: "Chrome", WindowTitle: "GitHub - nownow-labs/nownow"},
-			emoji: "",
-			want:  "Chrome: GitHub - nownow-labs/nownow",
+			name:     "activity only",
+			tmpl:     "{activity}",
+			ctx:      detect.Context{App: "Terminal"},
+			activity: "In terminal",
+			want:     "In terminal",
 		},
 		{
-			name:  "watching template",
-			tmpl:  "{emoji} watching: {watching}",
-			ctx:   detect.Context{Watching: "Stranger Things"},
-			emoji: "\U0001F4FA",
-			want:  "\U0001F4FA watching: Stranger Things",
+			name:     "custom template with title",
+			tmpl:     "{app}: {title}",
+			ctx:      detect.Context{App: "Chrome", WindowTitle: "GitHub - nownow-labs/nownow"},
+			activity: "",
+			want:     "Chrome: GitHub - nownow-labs/nownow",
 		},
 		{
-			name:  "watching empty",
-			tmpl:  "{app} · {watching}",
-			ctx:   detect.Context{App: "Chrome"},
-			emoji: "",
-			want:  "Chrome",
+			name:     "watching template",
+			tmpl:     "{activity}",
+			ctx:      detect.Context{Watching: "Stranger Things"},
+			activity: "Watching: Stranger Things",
+			want:     "Watching: Stranger Things",
 		},
 		{
-			name:  "music subfields",
-			tmpl:  "{music.artist} playing {music.track}",
-			ctx:   detect.Context{MusicArtist: "Queen", MusicTrack: "Radio Ga Ga"},
-			emoji: "",
-			want:  "Queen playing Radio Ga Ga",
+			name:     "watching empty",
+			tmpl:     "{app} · {watching}",
+			ctx:      detect.Context{App: "Chrome"},
+			activity: "",
+			want:     "Chrome",
 		},
 		{
-			name:  "legacy project/branch placeholders render as literals",
-			tmpl:  "{emoji} {app} · {project} ({branch})",
-			ctx:   detect.Context{App: "VS Code"},
-			emoji: "\U0001F4BB",
-			want:  "\U0001F4BB VS Code · {project} ({branch})",
+			name:     "music subfields",
+			tmpl:     "{music.artist} playing {music.track}",
+			ctx:      detect.Context{MusicArtist: "Queen", MusicTrack: "Radio Ga Ga"},
+			activity: "",
+			want:     "Queen playing Radio Ga Ga",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := Render(tt.tmpl, tt.ctx, tt.emoji)
+			got := Render(tt.tmpl, tt.ctx, tt.activity)
 			if got != tt.want {
 				t.Errorf("Render() = %q, want %q", got, tt.want)
 			}

@@ -43,7 +43,6 @@ func (c *Client) userAgent() string {
 // StatusRequest is the body for POST /api/status.
 type StatusRequest struct {
 	Content     string `json:"content"`
-	Emoji       string `json:"emoji,omitempty"`
 	App         string `json:"app,omitempty"`
 	MusicArtist string `json:"music_artist,omitempty"`
 	MusicTrack  string `json:"music_track,omitempty"`

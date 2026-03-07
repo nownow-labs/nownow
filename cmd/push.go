@@ -37,16 +37,13 @@ var pushCmd = &cobra.Command{
 				return nil
 			}
 
+			activity := cfg.ResolveActivity(ctx.App, ctx.Watching, ctx.Music())
+
 			req.App = ctx.App
-			req.Emoji = cfg.EmojiFor(ctx.App, "")
-			if ctx.HasMusic() && req.Emoji == "" {
-				req.Emoji = "\U0001F3B5"
-			}
 			req.MusicArtist = ctx.MusicArtist
 			req.MusicTrack = ctx.MusicTrack
 			req.Watching = ctx.Watching
-
-			req.Content = template.Render(cfg.Template, ctx, req.Emoji)
+			req.Content = template.Render(cfg.Template, ctx, activity)
 		}
 
 		if req.Content == "" {
