@@ -35,10 +35,16 @@ func TestHasToken(t *testing.T) {
 }
 
 func TestIsIgnored(t *testing.T) {
-	cfg := Config{Ignore: []string{"1Password", "System Preferences"}}
+	cfg := Config{Ignore: []string{"1Password", "System Preferences", "System Settings"}}
 
 	if !cfg.IsIgnored("1Password") {
 		t.Error("1Password should be ignored")
+	}
+	if !cfg.IsIgnored("1password") {
+		t.Error("1password (lowercase) should be ignored (case-insensitive)")
+	}
+	if !cfg.IsIgnored("System Settings Helper") {
+		t.Error("System Settings Helper should be ignored (prefix match)")
 	}
 	if cfg.IsIgnored("VS Code") {
 		t.Error("VS Code should not be ignored")
@@ -61,6 +67,12 @@ func TestActivityFor(t *testing.T) {
 		{"Slack", "Chatting"},
 		{"Notion", "Taking notes"},
 		{"Unknown App", ""},
+		// Prefix matching
+		{"Google Chrome Beta", "Browsing"},
+		{"Google Chrome Canary", "Browsing"},
+		{"Safari Technology Preview", "Browsing"},
+		{"Adobe Photoshop 2024", "Editing photos"},
+		// Negative: "Code" must not match "Codeium"
 		{"Codeium", ""},
 	}
 

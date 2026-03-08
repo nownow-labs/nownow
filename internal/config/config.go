@@ -63,21 +63,22 @@ func DefaultConfig() Config {
 			{Match: []string{"Visual Studio Code", "Code", "Cursor", "Windsurf", "Zed", "Sublime Text", "Nova"}, Activity: "Coding"},
 			{Match: []string{"Xcode", "Android Studio"}, Activity: "Building an app"},
 			{Match: []string{"IntelliJ IDEA", "GoLand", "PyCharm", "WebStorm", "RustRover", "CLion", "PhpStorm", "Rider"}, Activity: "Coding"},
-			{Match: []string{"Terminal", "iTerm2", "Warp", "Alacritty", "kitty", "Hyper", "WezTerm", "Rio"}, Activity: "In the terminal"},
+			{Match: []string{"Terminal", "iTerm2", "Warp", "Alacritty", "kitty", "Hyper", "WezTerm", "Rio", "Ghostty"}, Activity: "In the terminal"},
 			{Match: []string{"Docker Desktop", "Podman Desktop"}, Activity: "Managing containers"},
 			{Match: []string{"TablePlus", "Postico", "DataGrip", "DBeaver", "Sequel Pro", "pgAdmin 4"}, Activity: "Querying database"},
+			{Match: []string{"GitHub Desktop", "Fork", "Tower", "Sourcetree"}, Activity: "Reviewing code"},
 			{Match: []string{"Postman", "Insomnia", "HTTPie", "RapidAPI"}, Activity: "Testing APIs"},
 			// Browsers
 			{Match: []string{"Google Chrome", "Safari", "Arc", "Firefox", "Brave Browser", "Microsoft Edge", "Opera", "Vivaldi", "Orion", "Zen Browser"}, Activity: "Browsing"},
 			// Design & creative
-			{Match: []string{"Figma", "Sketch", "Framer"}, Activity: "Designing"},
+			{Match: []string{"Figma", "Sketch", "Framer", "Canva"}, Activity: "Designing"},
 			{Match: []string{"Adobe Photoshop", "Pixelmator Pro", "Affinity Photo 2", "GIMP"}, Activity: "Editing photos"},
-			{Match: []string{"Adobe Illustrator", "Affinity Designer 2", "Vectornator", "Linearity Curve"}, Activity: "Drawing vectors"},
-			{Match: []string{"Final Cut Pro", "Adobe Premiere Pro", "DaVinci Resolve", "CapCut", "iMovie"}, Activity: "Editing video"},
+			{Match: []string{"Adobe Illustrator", "Affinity Designer 2", "Vectornator", "Linearity Curve", "Inkscape"}, Activity: "Drawing vectors"},
+			{Match: []string{"Final Cut Pro", "Adobe Premiere Pro", "DaVinci Resolve", "CapCut", "iMovie", "Adobe After Effects", "Adobe Media Encoder"}, Activity: "Editing video"},
 			{Match: []string{"Logic Pro", "Ableton Live", "GarageBand", "FL Studio"}, Activity: "Making music"},
 			{Match: []string{"Blender", "Cinema 4D", "Maya"}, Activity: "3D modeling"},
 			// Communication
-			{Match: []string{"Slack", "Discord", "Telegram", "WeChat", "Messages", "WhatsApp", "Signal"}, Activity: "Chatting"},
+			{Match: []string{"Slack", "Discord", "Telegram", "WeChat", "Messages", "WhatsApp", "Signal", "Beeper", "Rocket.Chat", "WeCom", "企业微信"}, Activity: "Chatting"},
 			{Match: []string{"Zoom", "Google Meet", "Microsoft Teams", "Lark", "Feishu", "腾讯会议", "钉钉"}, Activity: "In a meeting"},
 			{Match: []string{"Mail", "Outlook", "Spark", "Airmail", "Mimestream"}, Activity: "Reading email"},
 			// Writing & knowledge
@@ -87,6 +88,7 @@ func DefaultConfig() Config {
 			// Productivity
 			{Match: []string{"Microsoft Excel", "Numbers", "Google Sheets"}, Activity: "Working on a spreadsheet"},
 			{Match: []string{"Keynote", "Microsoft PowerPoint", "Google Slides"}, Activity: "Making slides"},
+			{Match: []string{"Miro"}, Activity: "Whiteboarding"},
 			{Match: []string{"Linear", "Jira", "Asana", "Trello", "Todoist", "Things"}, Activity: "Managing tasks"},
 			{Match: []string{"Calendar", "Fantastical", "Cron"}, Activity: "Checking calendar"},
 			// Reading & learning
@@ -198,21 +200,42 @@ func (c Config) HasToken() bool {
 	return c.Token != ""
 }
 
+// matchesApp reports whether name matches app by exact case-insensitive
+// comparison or by prefix + word-boundary (space after name).
+// e.g. "Google Chrome" matches "Google Chrome Beta" but "Code" does not match "Codeium".
+func matchesApp(name, app string) bool {
+	if strings.EqualFold(name, app) {
+		return true
+	}
+	return strings.HasPrefix(strings.ToLower(app), strings.ToLower(name)+" ")
+}
+
 // IsIgnored returns true if the app name should be ignored.
 func (c Config) IsIgnored(app string) bool {
 	for _, name := range c.Ignore {
-		if name == app {
+		if matchesApp(name, app) {
 			return true
 		}
 	}
 	return false
 }
 
-// ActivityFor returns the activity label for a given app name via exact case-insensitive match.
+// ActivityFor returns the activity label for a given app name.
+// It tries exact case-insensitive match first, then prefix + word-boundary fallback.
 func (c Config) ActivityFor(app string) string {
+	appLower := strings.ToLower(app)
+	// Pass 1: exact match (preserves current behavior)
 	for _, rule := range c.ActivityRules {
 		for _, m := range rule.Match {
 			if strings.EqualFold(app, m) {
+				return rule.Activity
+			}
+		}
+	}
+	// Pass 2: prefix + word boundary fallback
+	for _, rule := range c.ActivityRules {
+		for _, m := range rule.Match {
+			if strings.HasPrefix(appLower, strings.ToLower(m)+" ") {
 				return rule.Activity
 			}
 		}
