@@ -10,8 +10,8 @@ import (
 )
 
 type ActivityRule struct {
-	Match    []string `yaml:"match"`
-	Activity string   `yaml:"activity"`
+	Match    []string `yaml:"match" json:"match"`
+	Activity string   `yaml:"activity" json:"activity"`
 }
 
 type Config struct {
