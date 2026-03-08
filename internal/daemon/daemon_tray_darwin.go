@@ -24,6 +24,9 @@ func startTray(interval time.Duration) {
 	)
 	start()
 
+	// Set the app icon after NSApp is initialized by systray.
+	webwin.SetAppIcon()
+
 	// Create hidden webview window for settings UI.
 	webwin.Init("http://"+settings.ListenAddr, end)
 

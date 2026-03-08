@@ -7,10 +7,12 @@ package webwin
 #cgo darwin LDFLAGS: -framework Cocoa
 
 #include <stdint.h>
+#include <stdlib.h>
 
 void webwin_hideWindow(uintptr_t wndPtr);
 void webwin_showWindow(uintptr_t wndPtr);
 void webwin_setWindowDelegate(uintptr_t wndPtr);
+void webwin_setAppIcon(const void *data, int length);
 */
 import "C"
 
@@ -73,4 +75,15 @@ func Terminate() {
 	if wv != nil {
 		wv.Terminate()
 	}
+}
+
+// SetAppIcon sets the application icon from the embedded PNG.
+// This makes the icon visible in Activity Monitor, Spotlight, etc.
+func SetAppIcon() {
+	if len(appIconPNG) == 0 {
+		return
+	}
+	ptr := C.CBytes(appIconPNG)
+	C.webwin_setAppIcon(ptr, C.int(len(appIconPNG)))
+	C.free(ptr)
 }

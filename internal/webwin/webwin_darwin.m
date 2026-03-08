@@ -30,6 +30,14 @@ void webwin_hideWindow(uintptr_t wndPtr) {
     [w orderOut:nil];
 }
 
+void webwin_setAppIcon(const void *data, int length) {
+    NSData *imgData = [NSData dataWithBytes:data length:length];
+    NSImage *icon = [[NSImage alloc] initWithData:imgData];
+    if (icon) {
+        [NSApp setApplicationIconImage:icon];
+    }
+}
+
 void webwin_showWindow(uintptr_t wndPtr) {
     NSWindow *w = (__bridge NSWindow *)(void *)wndPtr;
     dispatch_async(dispatch_get_main_queue(), ^{

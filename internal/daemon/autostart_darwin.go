@@ -5,7 +5,9 @@ package daemon
 import (
 	"fmt"
 	"os"
-"path/filepath"
+	"os/exec"
+	"os/user"
+	"path/filepath"
 	"text/template"
 )
 
@@ -69,19 +71,47 @@ func InstallAutostart() error {
 	if err != nil {
 		return fmt.Errorf("creating plist: %w", err)
 	}
-	defer f.Close()
 
 	err = tmpl.Execute(f, map[string]string{
 		"Label":  launchdLabel,
 		"Exe":    exe,
 		"LogDir": logDir,
 	})
+	if closeErr := f.Close(); err == nil {
+		err = closeErr
+	}
 	if err != nil {
 		return err
 	}
 
+	// Try to load the service into launchd so it takes effect immediately.
+	// This is best-effort: bootstrap may fail in non-GUI sessions (SSH, CI)
+	// or when the daemon is already running. The plist with RunAtLoad=true
+	// guarantees it will load on next login regardless.
+	if domain, err := guiDomain(); err == nil && !isServiceLoaded() {
+		if err := exec.Command("launchctl", "bootstrap", domain, plistPath()).Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "note: launchctl bootstrap skipped (%v), will activate on next login\n", err)
+		}
+	}
+
 	fmt.Printf("autostart installed: %s\n", plistPath())
 	return nil
+}
+
+func guiDomain() (string, error) {
+	u, err := user.Current()
+	if err != nil {
+		return "", fmt.Errorf("getting current user: %w", err)
+	}
+	return "gui/" + u.Uid, nil
+}
+
+func isServiceLoaded() bool {
+	domain, err := guiDomain()
+	if err != nil {
+		return false
+	}
+	return exec.Command("launchctl", "print", domain+"/"+launchdLabel).Run() == nil
 }
 
 // UninstallAutostart removes the launchd plist.
@@ -89,6 +119,13 @@ func UninstallAutostart() error {
 	p := plistPath()
 	if _, err := os.Stat(p); os.IsNotExist(err) {
 		return nil
+	}
+	// Unload the service from launchd before removing the plist.
+	if isServiceLoaded() {
+		domain, err := guiDomain()
+		if err == nil {
+			_ = exec.Command("launchctl", "bootout", domain+"/"+launchdLabel).Run()
+		}
 	}
 	if err := os.Remove(p); err != nil {
 		return err
