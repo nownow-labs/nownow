@@ -31,13 +31,13 @@ jobs:
             export CC="clang -arch x86_64"
             export CXX="clang++ -arch x86_64"
           fi
-          go build -ldflags "-s -w -X github.com/nownow-labs/nownow/cmd.Version=${VERSION}" -o dist/nownow .
-          cd dist && tar czf nownow_darwin_${{ matrix.goarch }}.tar.gz nownow
-          rm nownow
+          go build -ldflags "-s -w -X github.com/opennow-labs/now-cli/cmd.Version=${VERSION}" -o dist/now .
+          cd dist && tar czf now_darwin_${{ matrix.goarch }}.tar.gz now
+          rm now
 
       - uses: actions/upload-artifact@v4
         with:
-          name: nownow_darwin_${{ matrix.goarch }}
+          name: now_darwin_${{ matrix.goarch }}
           path: dist/*.tar.gz
 
   build-cross:
@@ -75,21 +75,21 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           mkdir -p dist
-          go build -ldflags "-s -w -X github.com/nownow-labs/nownow/cmd.Version=${VERSION}" -o dist/nownow${{ matrix.ext }} .
+          go build -ldflags "-s -w -X github.com/opennow-labs/now-cli/cmd.Version=${VERSION}" -o dist/now${{ matrix.ext }} .
 
       - name: Package
         run: |
           cd dist
           if [ "${{ matrix.format }}" = "zip" ]; then
-            zip nownow_${{ matrix.goos }}_${{ matrix.goarch }}.zip nownow${{ matrix.ext }}
+            zip now_${{ matrix.goos }}_${{ matrix.goarch }}.zip now${{ matrix.ext }}
           else
-            tar czf nownow_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz nownow${{ matrix.ext }}
+            tar czf now_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz now${{ matrix.ext }}
           fi
-          rm -f nownow${{ matrix.ext }}
+          rm -f now${{ matrix.ext }}
 
       - uses: actions/upload-artifact@v4
         with:
-          name: nownow_${{ matrix.goos }}_${{ matrix.goarch }}
+          name: now_${{ matrix.goos }}_${{ matrix.goarch }}
           path: dist/*
 
   release:
@@ -128,56 +128,56 @@ jobs:
           fi
 
           VERSION=${GITHUB_REF_NAME#v}
-          SHA_AMD64=$(sha256sum dist/nownow_darwin_amd64.tar.gz | awk '{print $1}')
-          SHA_ARM64=$(sha256sum dist/nownow_darwin_arm64.tar.gz | awk '{print $1}')
-          SHA_LINUX_AMD64=$(sha256sum dist/nownow_linux_amd64.tar.gz | awk '{print $1}')
-          SHA_LINUX_ARM64=$(sha256sum dist/nownow_linux_arm64.tar.gz | awk '{print $1}')
+          SHA_AMD64=$(sha256sum dist/now_darwin_amd64.tar.gz | awk '{print $1}')
+          SHA_ARM64=$(sha256sum dist/now_darwin_arm64.tar.gz | awk '{print $1}')
+          SHA_LINUX_AMD64=$(sha256sum dist/now_linux_amd64.tar.gz | awk '{print $1}')
+          SHA_LINUX_ARM64=$(sha256sum dist/now_linux_arm64.tar.gz | awk '{print $1}')
 
           FORMULA=$(cat <<RUBY
-          class Nownow < Formula
+          class NowCli < Formula
             desc "Keep your opennow.dev status green"
-            homepage "https://github.com/nownow-labs/nownow"
+            homepage "https://github.com/opennow-labs/now-cli"
             version "${VERSION}"
-            license "MIT"
+            license "O-Saasy"
 
             on_macos do
               if Hardware::CPU.arm?
-                url "https://github.com/nownow-labs/nownow/releases/download/v${VERSION}/nownow_darwin_arm64.tar.gz"
+                url "https://github.com/opennow-labs/now-cli/releases/download/v${VERSION}/now_darwin_arm64.tar.gz"
                 sha256 "${SHA_ARM64}"
               else
-                url "https://github.com/nownow-labs/nownow/releases/download/v${VERSION}/nownow_darwin_amd64.tar.gz"
+                url "https://github.com/opennow-labs/now-cli/releases/download/v${VERSION}/now_darwin_amd64.tar.gz"
                 sha256 "${SHA_AMD64}"
               end
             end
 
             on_linux do
               if Hardware::CPU.arm?
-                url "https://github.com/nownow-labs/nownow/releases/download/v${VERSION}/nownow_linux_arm64.tar.gz"
+                url "https://github.com/opennow-labs/now-cli/releases/download/v${VERSION}/now_linux_arm64.tar.gz"
                 sha256 "${SHA_LINUX_ARM64}"
               else
-                url "https://github.com/nownow-labs/nownow/releases/download/v${VERSION}/nownow_linux_amd64.tar.gz"
+                url "https://github.com/opennow-labs/now-cli/releases/download/v${VERSION}/now_linux_amd64.tar.gz"
                 sha256 "${SHA_LINUX_AMD64}"
               end
             end
 
             def install
-              bin.install "nownow"
+              bin.install "now"
             end
 
             test do
-              assert_match version.to_s, shell_output("#{bin}/nownow version")
+              assert_match version.to_s, shell_output("#{bin}/now version")
             end
           end
           RUBY
           )
 
           # Clone tap, update formula, push
-          git clone "https://x-access-token:${TAP_TOKEN}@github.com/nownow-labs/homebrew-tap.git" tap
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/opennow-labs/homebrew-tap.git" tap
           mkdir -p tap/Formula
-          echo "$FORMULA" > tap/Formula/nownow.rb
+          echo "$FORMULA" > tap/Formula/now-cli.rb
           cd tap
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Formula/nownow.rb
-          git diff --cached --quiet || git commit -m "nownow ${VERSION}"
+          git add Formula/now-cli.rb
+          git diff --cached --quiet || git commit -m "now-cli ${VERSION}"
           git push

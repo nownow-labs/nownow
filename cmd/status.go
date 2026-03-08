@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/nownow-labs/nownow/internal/api"
-	"github.com/nownow-labs/nownow/internal/config"
-	"github.com/nownow-labs/nownow/internal/daemon"
+	"github.com/opennow-labs/now-cli/internal/api"
+	"github.com/opennow-labs/now-cli/internal/config"
+	"github.com/opennow-labs/now-cli/internal/daemon"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +18,7 @@ var statusCmd = &cobra.Command{
 			return fmt.Errorf("loading config: %w", err)
 		}
 		if !cfg.HasToken() {
-			return fmt.Errorf("not logged in — run: nownow login")
+			return fmt.Errorf("not logged in — run: now login")
 		}
 
 		// Daemon status

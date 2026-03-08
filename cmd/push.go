@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nownow-labs/nownow/internal/api"
-	"github.com/nownow-labs/nownow/internal/config"
-	"github.com/nownow-labs/nownow/internal/detect"
-	"github.com/nownow-labs/nownow/internal/template"
+	"github.com/opennow-labs/now-cli/internal/api"
+	"github.com/opennow-labs/now-cli/internal/config"
+	"github.com/opennow-labs/now-cli/internal/detect"
+	"github.com/opennow-labs/now-cli/internal/template"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +20,7 @@ var pushCmd = &cobra.Command{
 			return fmt.Errorf("loading config: %w", err)
 		}
 		if !cfg.HasToken() {
-			return fmt.Errorf("not logged in — run: nownow login")
+			return fmt.Errorf("not logged in — run: now login")
 		}
 
 		var req api.StatusRequest

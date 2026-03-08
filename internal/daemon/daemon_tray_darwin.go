@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"fyne.io/systray"
-	"github.com/nownow-labs/nownow/internal/settings"
-	"github.com/nownow-labs/nownow/internal/tray"
-	"github.com/nownow-labs/nownow/internal/webwin"
+	"github.com/opennow-labs/now-cli/internal/settings"
+	"github.com/opennow-labs/now-cli/internal/tray"
+	"github.com/opennow-labs/now-cli/internal/webwin"
 )
 
 func startTray(interval time.Duration) {

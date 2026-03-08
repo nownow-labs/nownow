@@ -62,12 +62,12 @@ func TestFindAsset(t *testing.T) {
 	release := &Release{
 		TagName: "v0.3.0",
 		Assets: []Asset{
-			{Name: "nownow_darwin_amd64.tar.gz", BrowserDownloadURL: "https://example.com/darwin_amd64"},
-			{Name: "nownow_darwin_arm64.tar.gz", BrowserDownloadURL: "https://example.com/darwin_arm64"},
-			{Name: "nownow_linux_amd64.tar.gz", BrowserDownloadURL: "https://example.com/linux_amd64"},
-			{Name: "nownow_linux_arm64.tar.gz", BrowserDownloadURL: "https://example.com/linux_arm64"},
-			{Name: "nownow_windows_amd64.zip", BrowserDownloadURL: "https://example.com/windows_amd64"},
-			{Name: "nownow_windows_arm64.zip", BrowserDownloadURL: "https://example.com/windows_arm64"},
+			{Name: "now_darwin_amd64.tar.gz", BrowserDownloadURL: "https://example.com/darwin_amd64"},
+			{Name: "now_darwin_arm64.tar.gz", BrowserDownloadURL: "https://example.com/darwin_arm64"},
+			{Name: "now_linux_amd64.tar.gz", BrowserDownloadURL: "https://example.com/linux_amd64"},
+			{Name: "now_linux_arm64.tar.gz", BrowserDownloadURL: "https://example.com/linux_arm64"},
+			{Name: "now_windows_amd64.zip", BrowserDownloadURL: "https://example.com/windows_amd64"},
+			{Name: "now_windows_arm64.zip", BrowserDownloadURL: "https://example.com/windows_arm64"},
 			{Name: "checksums.txt", BrowserDownloadURL: "https://example.com/checksums"},
 		},
 	}
@@ -85,7 +85,7 @@ func TestFindAssetNoMatch(t *testing.T) {
 	release := &Release{
 		TagName: "v0.3.0",
 		Assets: []Asset{
-			{Name: "nownow_freebsd_riscv64.tar.gz"},
+			{Name: "now_freebsd_riscv64.tar.gz"},
 		},
 	}
 
@@ -98,7 +98,7 @@ func TestFindAssetNoMatch(t *testing.T) {
 func TestCheckLatest(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"tag_name":"v0.9.9","assets":[{"name":"nownow_darwin_arm64.tar.gz","browser_download_url":"http://example.com/dl"}]}`))
+		w.Write([]byte(`{"tag_name":"v0.9.9","assets":[{"name":"now_darwin_arm64.tar.gz","browser_download_url":"http://example.com/dl"}]}`))
 	}))
 	defer server.Close()
 
@@ -154,9 +154,9 @@ func makeTarGz(t *testing.T, filename string, content []byte) []byte {
 
 func TestExtractBinary(t *testing.T) {
 	payload := []byte("fake-binary-content")
-	archive := makeTarGz(t, "nownow", payload)
+	archive := makeTarGz(t, "now", payload)
 
-	dest := filepath.Join(t.TempDir(), "nownow")
+	dest := filepath.Join(t.TempDir(), "now")
 	if err := extractBinary(bytes.NewReader(archive), dest); err != nil {
 		t.Fatalf("extractBinary() error: %v", err)
 	}
@@ -177,9 +177,9 @@ func TestExtractBinary(t *testing.T) {
 
 func TestExtractBinaryNested(t *testing.T) {
 	payload := []byte("nested-binary")
-	archive := makeTarGz(t, "nownow_darwin_arm64/nownow", payload)
+	archive := makeTarGz(t, "now_darwin_arm64/now", payload)
 
-	dest := filepath.Join(t.TempDir(), "nownow")
+	dest := filepath.Join(t.TempDir(), "now")
 	if err := extractBinary(bytes.NewReader(archive), dest); err != nil {
 		t.Fatalf("extractBinary() error: %v", err)
 	}
@@ -193,7 +193,7 @@ func TestExtractBinaryNested(t *testing.T) {
 func TestExtractBinaryNotFound(t *testing.T) {
 	archive := makeTarGz(t, "README.md", []byte("hello"))
 
-	dest := filepath.Join(t.TempDir(), "nownow")
+	dest := filepath.Join(t.TempDir(), "now")
 	err := extractBinary(bytes.NewReader(archive), dest)
 	if err == nil {
 		t.Fatal("extractBinary() expected error when binary not in archive")
@@ -202,15 +202,15 @@ func TestExtractBinaryNotFound(t *testing.T) {
 
 func TestDownload(t *testing.T) {
 	payload := []byte("real-binary")
-	archive := makeTarGz(t, "nownow", payload)
+	archive := makeTarGz(t, "now", payload)
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write(archive)
 	}))
 	defer server.Close()
 
-	dest := filepath.Join(t.TempDir(), "nownow")
-	asset := &Asset{Name: "nownow_darwin_arm64.tar.gz", BrowserDownloadURL: server.URL}
+	dest := filepath.Join(t.TempDir(), "now")
+	asset := &Asset{Name: "now_darwin_arm64.tar.gz", BrowserDownloadURL: server.URL}
 
 	if err := Download(asset, dest); err != nil {
 		t.Fatalf("Download() error: %v", err)
@@ -228,7 +228,7 @@ func TestDownloadHTTPError(t *testing.T) {
 	}))
 	defer server.Close()
 
-	dest := filepath.Join(t.TempDir(), "nownow")
+	dest := filepath.Join(t.TempDir(), "now")
 	asset := &Asset{Name: "test.tar.gz", BrowserDownloadURL: server.URL}
 
 	err := Download(asset, dest)

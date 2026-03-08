@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/nownow-labs/nownow/internal/config"
-	"github.com/nownow-labs/nownow/internal/daemon"
-	"github.com/nownow-labs/nownow/internal/tray"
+	"github.com/opennow-labs/now-cli/internal/config"
+	"github.com/opennow-labs/now-cli/internal/daemon"
+	"github.com/opennow-labs/now-cli/internal/tray"
 	"github.com/spf13/cobra"
 )
 
@@ -18,14 +18,14 @@ var (
 
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "Start the nownow daemon (background by default)",
+	Short: "Start the now daemon (background by default)",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := config.Load()
 		if err != nil {
 			return fmt.Errorf("loading config: %w", err)
 		}
 		if !cfg.HasToken() {
-			return fmt.Errorf("not logged in — run: nownow login")
+			return fmt.Errorf("not logged in — run: now login")
 		}
 
 		intervalStr := startInterval

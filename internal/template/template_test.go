@@ -3,7 +3,7 @@ package template
 import (
 	"testing"
 
-	"github.com/nownow-labs/nownow/internal/detect"
+	"github.com/opennow-labs/now-cli/internal/detect"
 )
 
 func TestRender(t *testing.T) {
@@ -52,9 +52,9 @@ func TestRender(t *testing.T) {
 		{
 			name:     "custom template with title",
 			tmpl:     "{app}: {title}",
-			ctx:      detect.Context{App: "Chrome", WindowTitle: "GitHub - nownow-labs/nownow"},
+			ctx:      detect.Context{App: "Chrome", WindowTitle: "GitHub - now-labs/now"},
 			activity: "",
-			want:     "Chrome: GitHub - nownow-labs/nownow",
+			want:     "Chrome: GitHub - now-labs/now",
 		},
 		{
 			name:     "watching template",

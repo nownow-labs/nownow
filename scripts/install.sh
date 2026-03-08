@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-REPO="nownow-labs/nownow"
-BINARY="nownow"
+REPO="opennow-labs/now-cli"
+BINARY="now"
 INSTALL_DIR="/usr/local/bin"
 
 # Detect OS and arch
@@ -57,9 +57,9 @@ else
   echo "Installing ${BINARY} ${LATEST} (${OS}/${ARCH})..."
 fi
 
-# Stop daemon if running (pid file at ~/.config/nownow/daemon.pid)
+# Stop daemon if running (pid file at ~/.config/now/daemon.pid)
 DAEMON_WAS_RUNNING=0
-CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/nownow"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/now"
 PID_FILE="${CONFIG_DIR}/daemon.pid"
 if [ -f "$PID_FILE" ]; then
   DAEMON_PID=$(cat "$PID_FILE" 2>/dev/null || true)
@@ -113,6 +113,6 @@ echo "Installed ${BINARY} ${INSTALLED_VERSION} to ${TARGET}"
 if [ "$UPGRADE" = 0 ]; then
   echo ""
   echo "Next steps:"
-  echo "  nownow login"
+  echo "  now login"
 fi
 # Daemon restart happens via EXIT trap

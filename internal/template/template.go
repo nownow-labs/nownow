@@ -3,7 +3,7 @@ package template
 import (
 	"strings"
 
-	"github.com/nownow-labs/nownow/internal/detect"
+	"github.com/opennow-labs/now-cli/internal/detect"
 )
 
 // Render takes a template string and a Context, returning the rendered status.

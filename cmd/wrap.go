@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/nownow-labs/nownow/internal/api"
-	"github.com/nownow-labs/nownow/internal/config"
-	"github.com/nownow-labs/nownow/internal/wrap"
+	"github.com/opennow-labs/now-cli/internal/api"
+	"github.com/opennow-labs/now-cli/internal/config"
+	"github.com/opennow-labs/now-cli/internal/wrap"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +16,7 @@ var wrapCmd = &cobra.Command{
 	DisableFlagParsing: false,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return fmt.Errorf("no command specified — usage: nownow wrap -- command [args...]")
+			return fmt.Errorf("no command specified — usage: now wrap -- command [args...]")
 		}
 
 		cfg, err := config.Load()
@@ -24,7 +24,7 @@ var wrapCmd = &cobra.Command{
 			return fmt.Errorf("loading config: %w", err)
 		}
 		if !cfg.HasToken() {
-			return fmt.Errorf("not logged in — run: nownow login")
+			return fmt.Errorf("not logged in — run: now login")
 		}
 
 		name, _ := cmd.Flags().GetString("name")
@@ -60,6 +60,6 @@ func init() {
 	wrapCmd.Flags().String("name", "", "human-readable name for the command")
 	wrapCmd.Flags().String("on-success", "", "custom message on success (supports {cmd}, {name}, {duration})")
 	wrapCmd.Flags().String("on-failure", "", "custom message on failure (supports {cmd}, {name}, {exit_code}, {duration})")
-	wrapCmd.Flags().Bool("quiet", false, "suppress nownow output (only push, don't print)")
+	wrapCmd.Flags().Bool("quiet", false, "suppress now output (only push, don't print)")
 	rootCmd.AddCommand(wrapCmd)
 }

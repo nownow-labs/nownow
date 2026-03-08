@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nownow-labs/nownow/internal/hook"
+	"github.com/opennow-labs/now-cli/internal/hook"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +16,7 @@ var hookCmd = &cobra.Command{
 
 var hookInstallCmd = &cobra.Command{
 	Use:   "install",
-	Short: "Install nownow git hooks in the current repository",
+	Short: "Install now git hooks in the current repository",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cwd, err := os.Getwd()
 		if err != nil {
@@ -65,7 +65,7 @@ var hookInstallCmd = &cobra.Command{
 
 var hookRemoveCmd = &cobra.Command{
 	Use:   "remove",
-	Short: "Remove nownow git hooks from the current repository",
+	Short: "Remove now git hooks from the current repository",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cwd, err := os.Getwd()
 		if err != nil {
@@ -79,14 +79,14 @@ var hookRemoveCmd = &cobra.Command{
 		if err := hook.Remove(gitDir); err != nil {
 			return err
 		}
-		fmt.Println("nownow hooks removed")
+		fmt.Println("now hooks removed")
 		return nil
 	},
 }
 
 var hookListCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List installed nownow git hooks",
+	Short: "List installed now git hooks",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cwd, err := os.Getwd()
 		if err != nil {
@@ -103,7 +103,7 @@ var hookListCmd = &cobra.Command{
 		}
 
 		if len(hooks) == 0 {
-			fmt.Println("no nownow hooks installed")
+			fmt.Println("no now hooks installed")
 			return nil
 		}
 		for _, h := range hooks {

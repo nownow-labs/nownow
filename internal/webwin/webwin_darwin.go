@@ -17,7 +17,7 @@ import "C"
 import (
 	"log/slog"
 
-	"github.com/nownow-labs/nownow/internal/webview"
+	"github.com/opennow-labs/now-cli/internal/webview"
 )
 
 var (
@@ -34,7 +34,7 @@ func Init(url string, quitFn func()) {
 		slog.Error("failed to create webview window")
 		return
 	}
-	wv.SetTitle("nownow Settings")
+	wv.SetTitle("Now Settings")
 	wv.SetSize(900, 700, webview.HintNone)
 	wv.Navigate(url)
 

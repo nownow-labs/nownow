@@ -114,9 +114,9 @@ func Dir() (string, error) {
 
 	// Respect XDG_CONFIG_HOME if set
 	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
-		return filepath.Join(xdg, "nownow"), nil
+		return filepath.Join(xdg, "now"), nil
 	}
-	return filepath.Join(home, ".config", "nownow"), nil
+	return filepath.Join(home, ".config", "now"), nil
 }
 
 // Path returns the full path to config.yml.

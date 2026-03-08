@@ -41,9 +41,9 @@ func NewClient(endpoint, token string) *Client {
 
 func (c *Client) userAgent() string {
 	if c.Telemetry {
-		return fmt.Sprintf("nownow/%s (%s/%s)", c.Version, runtime.GOOS, runtime.GOARCH)
+		return fmt.Sprintf("now/%s (%s/%s)", c.Version, runtime.GOOS, runtime.GOARCH)
 	}
-	return fmt.Sprintf("nownow/%s", c.Version)
+	return fmt.Sprintf("now/%s", c.Version)
 }
 
 // StatusRequest is the body for POST /api/status.

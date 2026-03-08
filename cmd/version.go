@@ -7,14 +7,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Set via ldflags at build time: -ldflags "-X github.com/nownow-labs/nownow/cmd.Version=v0.1.0"
+// Set via ldflags at build time: -ldflags "-X github.com/opennow-labs/now-cli/cmd.Version=v0.1.0"
 var Version = "dev"
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Print nownow version",
+	Short: "Print now version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("nownow %s (%s/%s)\n", Version, runtime.GOOS, runtime.GOARCH)
+		fmt.Printf("now %s (%s/%s)\n", Version, runtime.GOOS, runtime.GOARCH)
 	},
 }
 

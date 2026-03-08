@@ -65,14 +65,14 @@ func TestInstallAppendsToExisting(t *testing.T) {
 		t.Error("existing content was overwritten")
 	}
 	if !strings.Contains(content, markerStart) {
-		t.Error("nownow block not appended")
+		t.Error("now block not appended")
 	}
 }
 
 func TestInstallWithCustomTemplate(t *testing.T) {
 	gitDir := setupGitDir(t)
 	templates := map[string]string{
-		"post-commit": `nownow push "deployed {commit_msg}"`,
+		"post-commit": `now push "deployed {commit_msg}"`,
 	}
 	err := Install(gitDir, []string{"post-commit"}, templates)
 	if err != nil {
@@ -93,7 +93,7 @@ func TestInstallReplacesExistingBlock(t *testing.T) {
 
 	data, _ := os.ReadFile(filepath.Join(gitDir, "hooks", "post-commit"))
 	if strings.Count(string(data), markerStart) != 1 {
-		t.Error("duplicate nownow blocks found")
+		t.Error("duplicate now blocks found")
 	}
 }
 
@@ -106,7 +106,7 @@ func TestRemove(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// File should be deleted (only had shebang + nownow block)
+	// File should be deleted (only had shebang + now block)
 	_, err = os.Stat(filepath.Join(gitDir, "hooks", "post-commit"))
 	if !os.IsNotExist(err) {
 		t.Error("hook file should have been deleted")
@@ -127,7 +127,7 @@ func TestRemovePreservesOtherContent(t *testing.T) {
 	}
 	content := string(data)
 	if strings.Contains(content, markerStart) {
-		t.Error("nownow block should be removed")
+		t.Error("now block should be removed")
 	}
 	if !strings.Contains(content, "echo existing") {
 		t.Error("existing content should be preserved")

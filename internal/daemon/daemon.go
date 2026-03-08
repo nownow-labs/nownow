@@ -11,10 +11,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/nownow-labs/nownow/internal/config"
-	"github.com/nownow-labs/nownow/internal/logging"
-	"github.com/nownow-labs/nownow/internal/settings"
-	"github.com/nownow-labs/nownow/internal/tray"
+	"github.com/opennow-labs/now-cli/internal/config"
+	"github.com/opennow-labs/now-cli/internal/logging"
+	"github.com/opennow-labs/now-cli/internal/settings"
+	"github.com/opennow-labs/now-cli/internal/tray"
 )
 
 // PidFile returns the path to the daemon PID file.
@@ -142,7 +142,7 @@ func RunForeground(interval time.Duration) error {
 		return err
 	}
 	if !cfg.HasToken() {
-		return fmt.Errorf("not logged in — run: nownow login")
+		return fmt.Errorf("not logged in — run: now login")
 	}
 
 	// Initialize structured logging

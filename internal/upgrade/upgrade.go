@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-var releasesURL = "https://api.github.com/repos/nownow-labs/nownow/releases/latest"
+var releasesURL = "https://api.github.com/repos/opennow-labs/now-cli/releases/latest"
 
 func setReleasesURL(url string) {
 	releasesURL = url
@@ -151,7 +151,7 @@ func extractBinary(r io.Reader, destPath string) error {
 		if err != nil {
 			return fmt.Errorf("reading archive: %w", err)
 		}
-		if hdr.Typeflag == tar.TypeReg && strings.HasSuffix(hdr.Name, "nownow") {
+		if hdr.Typeflag == tar.TypeReg && (filepath.Base(hdr.Name) == "now") {
 			tmp := destPath + ".tmp"
 			f, err := os.OpenFile(tmp, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0755)
 			if err != nil {
@@ -171,7 +171,7 @@ func extractBinary(r io.Reader, destPath string) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("nownow binary not found in archive")
+	return fmt.Errorf("now binary not found in archive")
 }
 
 func extractBinaryFromZip(r io.Reader, destPath string) error {
@@ -185,7 +185,7 @@ func extractBinaryFromZip(r io.Reader, destPath string) error {
 		return fmt.Errorf("opening zip: %w", err)
 	}
 
-	binaryName := "nownow.exe"
+	binaryName := "now.exe"
 	for _, f := range zr.File {
 		name := filepath.Base(f.Name)
 		if name != binaryName {
@@ -215,5 +215,5 @@ func extractBinaryFromZip(r io.Reader, destPath string) error {
 		}
 		return nil
 	}
-	return fmt.Errorf("nownow.exe not found in zip archive")
+	return fmt.Errorf("now.exe not found in zip archive")
 }

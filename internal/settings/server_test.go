@@ -11,7 +11,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/nownow-labs/nownow/internal/config"
+	"github.com/opennow-labs/now-cli/internal/config"
 )
 
 func setup(t *testing.T) *httptest.Server {
@@ -711,7 +711,7 @@ func TestGetLogs_WithFile(t *testing.T) {
 	// Write a fake log file
 	dir, _ := config.Dir()
 	os.MkdirAll(dir, 0700)
-	os.WriteFile(filepath.Join(dir, "nownow.log"), []byte("line1\nline2\nline3\n"), 0600)
+	os.WriteFile(filepath.Join(dir, "now.log"), []byte("line1\nline2\nline3\n"), 0600)
 
 	resp, err := http.Get(srv.URL + "/api/logs?lines=2")
 	if err != nil {
@@ -739,7 +739,7 @@ func TestGetLogs_NegativeLines(t *testing.T) {
 
 	dir, _ := config.Dir()
 	os.MkdirAll(dir, 0700)
-	os.WriteFile(filepath.Join(dir, "nownow.log"), []byte("line1\nline2\n"), 0600)
+	os.WriteFile(filepath.Join(dir, "now.log"), []byte("line1\nline2\n"), 0600)
 
 	resp, err := http.Get(srv.URL + "/api/logs?lines=-1")
 	if err != nil {
@@ -773,7 +773,7 @@ func TestConfigIsolation(t *testing.T) {
 		t.Errorf("config path %q should be under %q", p, tmpDir)
 	}
 
-	_, err := os.Stat(filepath.Join(tmpDir, "nownow", "config.yml"))
+	_, err := os.Stat(filepath.Join(tmpDir, "now", "config.yml"))
 	if err != nil {
 		t.Errorf("config file should exist: %v", err)
 	}

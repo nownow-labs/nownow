@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/nownow-labs/nownow/cmd"
+	"github.com/opennow-labs/now-cli/cmd"
 )
 
 func main() {

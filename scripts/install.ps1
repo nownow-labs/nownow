@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
-$Repo = "nownow-labs/nownow"
-$Binary = "nownow"
+$Repo = "opennow-labs/now-cli"
+$Binary = "now"
 
 # Detect architecture
 $Arch = switch ($env:PROCESSOR_ARCHITECTURE) {
@@ -46,4 +46,4 @@ $Installed = & (Join-Path $InstallDir "$Binary.exe") version 2>&1
 Write-Host "Installed $Installed"
 Write-Host ""
 Write-Host "Next steps:"
-Write-Host "  nownow login"
+Write-Host "  now login"

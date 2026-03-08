@@ -15,14 +15,14 @@ type Options struct {
 	Name      string   // Human-readable name (defaults to command basename)
 	OnSuccess string   // Custom success message template
 	OnFailure string   // Custom failure message template
-	Quiet     bool     // Suppress nownow's own output
+	Quiet     bool     // Suppress CLI output
 	PushFn    func(msg string) error // Function to push status
 }
 
 // Run executes the wrapped command, pushes status, and returns the exit code.
 func Run(opts Options) int {
 	if len(opts.Args) == 0 {
-		fmt.Fprintln(os.Stderr, "nownow wrap: no command specified")
+		fmt.Fprintln(os.Stderr, "now wrap: no command specified")
 		return 1
 	}
 
@@ -46,7 +46,7 @@ func Run(opts Options) int {
 			exitCode = exitErr.ExitCode()
 		} else {
 			// Command not found or other exec error
-			fmt.Fprintf(os.Stderr, "nownow wrap: %v\n", err)
+			fmt.Fprintf(os.Stderr, "now wrap: %v\n", err)
 			exitCode = 1
 		}
 	}
@@ -56,7 +56,7 @@ func Run(opts Options) int {
 	if opts.PushFn != nil {
 		if pushErr := opts.PushFn(msg); pushErr != nil {
 			if !opts.Quiet {
-				fmt.Fprintf(os.Stderr, "nownow wrap: push failed: %v\n", pushErr)
+				fmt.Fprintf(os.Stderr, "now wrap: push failed: %v\n", pushErr)
 			}
 		} else if !opts.Quiet {
 			fmt.Fprintf(os.Stderr, "pushed: %s\n", msg)

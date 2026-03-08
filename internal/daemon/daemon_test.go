@@ -32,7 +32,7 @@ func TestPidFileLifecycle(t *testing.T) {
 	}
 
 	// Verify file contents
-	pidPath := filepath.Join(tmpDir, "nownow", "daemon.pid")
+	pidPath := filepath.Join(tmpDir, "now", "daemon.pid")
 	data, err := os.ReadFile(pidPath)
 	if err != nil {
 		t.Fatalf("reading pid file: %v", err)
@@ -54,7 +54,7 @@ func TestIsRunningWithDeadPid(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", tmpDir)
 
 	// Write a PID that definitely doesn't exist
-	pidDir := filepath.Join(tmpDir, "nownow")
+	pidDir := filepath.Join(tmpDir, "now")
 	os.MkdirAll(pidDir, 0700)
 	os.WriteFile(filepath.Join(pidDir, "daemon.pid"), []byte("999999999"), 0600)
 

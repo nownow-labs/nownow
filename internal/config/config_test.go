@@ -137,7 +137,7 @@ func TestSaveAndLoad(t *testing.T) {
 	}
 
 	// Verify file exists
-	p := filepath.Join(tmpDir, "nownow", "config.yml")
+	p := filepath.Join(tmpDir, "now", "config.yml")
 	if _, err := os.Stat(p); err != nil {
 		t.Fatalf("config file not created: %v", err)
 	}
@@ -179,7 +179,7 @@ func TestLoadPartialConfig(t *testing.T) {
 	tmpDir := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", tmpDir)
 
-	dir := filepath.Join(tmpDir, "nownow")
+	dir := filepath.Join(tmpDir, "now")
 	os.MkdirAll(dir, 0700)
 	// Write a partial config — only token, no endpoint
 	os.WriteFile(filepath.Join(dir, "config.yml"), []byte("token: now_partial\n"), 0600)
@@ -279,7 +279,7 @@ func TestTelemetryToSendAppMigration(t *testing.T) {
 	tmpDir := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", tmpDir)
 
-	dir := filepath.Join(tmpDir, "nownow")
+	dir := filepath.Join(tmpDir, "now")
 	os.MkdirAll(dir, 0700)
 	os.WriteFile(filepath.Join(dir, "config.yml"), []byte("token: now_test\ntelemetry: false\n"), 0600)
 
@@ -296,7 +296,7 @@ func TestTelemetryToSendAppMigrationNoOverride(t *testing.T) {
 	tmpDir := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", tmpDir)
 
-	dir := filepath.Join(tmpDir, "nownow")
+	dir := filepath.Join(tmpDir, "now")
 	os.MkdirAll(dir, 0700)
 	os.WriteFile(filepath.Join(dir, "config.yml"), []byte("token: now_test\ntelemetry: false\nsend_app: true\n"), 0600)
 
@@ -366,7 +366,7 @@ func TestLoadLegacyTemplate(t *testing.T) {
 	tmpDir := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", tmpDir)
 
-	dir := filepath.Join(tmpDir, "nownow")
+	dir := filepath.Join(tmpDir, "now")
 	os.MkdirAll(dir, 0700)
 	os.WriteFile(filepath.Join(dir, "config.yml"), []byte("token: now_test\ntemplate: \"{emoji} {app} · {project} ({branch})\"\n"), 0600)
 

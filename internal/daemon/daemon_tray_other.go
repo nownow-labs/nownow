@@ -5,7 +5,7 @@ package daemon
 import (
 	"time"
 
-	"github.com/nownow-labs/nownow/internal/tray"
+	"github.com/opennow-labs/now-cli/internal/tray"
 )
 
 func startTray(interval time.Duration) {

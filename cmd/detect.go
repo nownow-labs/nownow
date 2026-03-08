@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/nownow-labs/nownow/internal/detect"
+	"github.com/opennow-labs/now-cli/internal/detect"
 	"github.com/spf13/cobra"
 )
 

@@ -5,11 +5,11 @@ package daemon
 import (
 	"fmt"
 	"os"
-	"path/filepath"
+"path/filepath"
 	"text/template"
 )
 
-const launchdLabel = "st.ctx.now.nownow"
+const launchdLabel = "dev.opennow.cli"
 
 var launchdPlist = `<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -28,9 +28,9 @@ var launchdPlist = `<?xml version="1.0" encoding="UTF-8"?>
   <key>KeepAlive</key>
   <true/>
   <key>StandardOutPath</key>
-  <string>{{.LogDir}}/nownow.log</string>
+  <string>{{.LogDir}}/now.log</string>
   <key>StandardErrorPath</key>
-  <string>{{.LogDir}}/nownow.err</string>
+  <string>{{.LogDir}}/now.err</string>
 </dict>
 </plist>
 `
@@ -57,7 +57,7 @@ func InstallAutostart() error {
 	if err != nil {
 		return err
 	}
-	logDir := filepath.Join(home, "Library", "Logs", "nownow")
+	logDir := filepath.Join(home, "Library", "Logs", "now")
 	os.MkdirAll(logDir, 0700)
 
 	tmpl, err := template.New("plist").Parse(launchdPlist)

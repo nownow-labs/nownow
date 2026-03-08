@@ -10,7 +10,7 @@ import (
 
 const desktopEntry = `[Desktop Entry]
 Type=Application
-Name=nownow
+Name=now
 Exec=%s start --foreground
 Hidden=false
 NoDisplay=true
@@ -24,7 +24,7 @@ func autostartPath() (string, error) {
 	}
 	dir := filepath.Join(home, ".config", "autostart")
 	os.MkdirAll(dir, 0755)
-	return filepath.Join(dir, "nownow.desktop"), nil
+	return filepath.Join(dir, "now.desktop"), nil
 }
 
 // IsAutostartInstalled returns true if the .desktop autostart entry exists.

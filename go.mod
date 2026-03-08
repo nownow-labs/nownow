@@ -1,4 +1,4 @@
-module github.com/nownow-labs/nownow
+module github.com/opennow-labs/now-cli
 
 go 1.25.6
 

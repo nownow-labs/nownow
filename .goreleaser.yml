@@ -3,9 +3,9 @@ version: 2
 builds:
   - id: darwin-arm64
     main: .
-    binary: nownow
+    binary: now
     ldflags:
-      - -s -w -X github.com/nownow-labs/nownow/cmd.Version={{.Version}}
+      - -s -w -X github.com/opennow-labs/now-cli/cmd.Version={{.Version}}
     env:
       - CGO_ENABLED=1
     goos:
@@ -18,9 +18,9 @@ builds:
 
   - id: darwin-amd64
     main: .
-    binary: nownow
+    binary: now
     ldflags:
-      - -s -w -X github.com/nownow-labs/nownow/cmd.Version={{.Version}}
+      - -s -w -X github.com/opennow-labs/now-cli/cmd.Version={{.Version}}
     env:
       - CGO_ENABLED=1
     goos:
@@ -33,9 +33,9 @@ builds:
 
   - id: cross
     main: .
-    binary: nownow
+    binary: now
     ldflags:
-      - -s -w -X github.com/nownow-labs/nownow/cmd.Version={{.Version}}
+      - -s -w -X github.com/opennow-labs/now-cli/cmd.Version={{.Version}}
     env:
       - CGO_ENABLED=0
     goos:

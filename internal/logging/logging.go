@@ -10,14 +10,14 @@ import (
 )
 
 const (
-	logFileName = "nownow.log"
+	logFileName = "now.log"
 	maxLogSize  = 1 << 20 // 1 MB
 )
 
 // Init sets up structured logging to a file in configDir.
 // Creates the directory if it doesn't exist.
 // Truncates the log file if it exceeds 1 MB.
-// Set NOWNOW_DEBUG=1 for debug-level output.
+// Set NOW_DEBUG=1 for debug-level output.
 func Init(configDir string) error {
 	if err := os.MkdirAll(configDir, 0700); err != nil {
 		return fmt.Errorf("create log dir: %w", err)
@@ -48,7 +48,7 @@ func Init(configDir string) error {
 	w := io.MultiWriter(f, os.Stderr)
 
 	level := slog.LevelInfo
-	if os.Getenv("NOWNOW_DEBUG") == "1" {
+	if os.Getenv("NOW_DEBUG") == "1" {
 		level = slog.LevelDebug
 	}
 

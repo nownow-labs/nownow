@@ -17,10 +17,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nownow-labs/nownow/internal/api"
-	"github.com/nownow-labs/nownow/internal/config"
-	"github.com/nownow-labs/nownow/internal/open"
-	"github.com/nownow-labs/nownow/internal/upgrade"
+	"github.com/opennow-labs/now-cli/internal/api"
+	"github.com/opennow-labs/now-cli/internal/config"
+	"github.com/opennow-labs/now-cli/internal/open"
+	"github.com/opennow-labs/now-cli/internal/upgrade"
 )
 
 //go:embed ui.html
@@ -557,7 +557,7 @@ func handleGetLogs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logPath := filepath.Join(dir, "nownow.log")
+	logPath := filepath.Join(dir, "now.log")
 	data, err := os.ReadFile(logPath)
 	if err != nil {
 		if os.IsNotExist(err) {

@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nownow-labs/nownow/internal/api"
-	"github.com/nownow-labs/nownow/internal/config"
-	"github.com/nownow-labs/nownow/internal/daemon"
+	"github.com/opennow-labs/now-cli/internal/api"
+	"github.com/opennow-labs/now-cli/internal/config"
+	"github.com/opennow-labs/now-cli/internal/daemon"
 	"github.com/spf13/cobra"
 )
 
@@ -121,7 +121,7 @@ func loginWithDeviceFlow() error {
 
 		if time.Now().After(deadline) {
 			fmt.Print("\r  \n")
-			return fmt.Errorf("code expired, please run `nownow login` again")
+			return fmt.Errorf("code expired, please run `now login` again")
 		}
 
 		fmt.Printf("\r %c ", spinner[tick%len(spinner)])

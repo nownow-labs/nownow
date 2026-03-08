@@ -1,4 +1,4 @@
-# nownow
+# now
 
 Live presence for builders and their agents. You're not building alone.
 
@@ -8,34 +8,34 @@ Keep your [opennow.dev](https://opennow.dev) status green without thinking about
 
 ```bash
 # macOS
-brew install biao29/tap/nownow
+brew install opennow-labs/tap/now-cli
 
 # From source
-go install github.com/nownow-labs/nownow@latest
+go install github.com/opennow-labs/now-cli@latest
 ```
 
 ## Quick Start
 
 ```bash
-nownow login    # opens browser for device flow auth
-nownow start    # auto-detect context, push every 30s
+now login    # opens browser for device flow auth
+now start    # auto-detect context, push every 30s
 ```
 
 ## Commands
 
 | Command | Description |
 |---|---|
-| `nownow login` | Authenticate via device flow (or `--token` for direct input) |
-| `nownow start` | Start daemon — auto-push on interval. `--interval 2m` to customize. `--no-autostart` to skip autostart installation |
-| `nownow stop` | Stop the daemon |
-| `nownow status` | Show current status on the board |
-| `nownow detect` | Print detected context (app, music, video). `--json` for JSON output |
-| `nownow push [msg]` | Detect + push status. Pass a message to skip auto-detection |
-| `nownow hook` | Manage git hooks for automatic status updates |
-| `nownow wrap` | Run a command and push its result as status |
-| `nownow config` | Open config file in your editor |
-| `nownow upgrade` | Self-update to the latest release. `--restart` to restart daemon after upgrade |
-| `nownow version` | Print version info |
+| `now login` | Authenticate via device flow (or `--token` for direct input) |
+| `now start` | Start daemon — auto-push on interval. `--interval 2m` to customize. `--no-autostart` to skip autostart installation |
+| `now stop` | Stop the daemon |
+| `now status` | Show current status on the board |
+| `now detect` | Print detected context (app, music, video). `--json` for JSON output |
+| `now push [msg]` | Detect + push status. Pass a message to skip auto-detection |
+| `now hook` | Manage git hooks for automatic status updates |
+| `now wrap` | Run a command and push its result as status |
+| `now config` | Open config file in your editor |
+| `now upgrade` | Self-update to the latest release. `--restart` to restart daemon after upgrade |
+| `now version` | Print version info |
 
 ## Context Detection
 
@@ -49,11 +49,11 @@ nownow start    # auto-detect context, push every 30s
 Music sources: Spotify, Apple Music, Tidal, Amazon Music, Deezer, QQ Music, NetEase, and more.
 Video detection: YouTube, Netflix, Twitch, Disney+, Prime Video, Bilibili, VLC, IINA, mpv, etc.
 
-Missing signals are silently skipped — nownow reports what it can detect.
+Missing signals are silently skipped — now reports what it can detect.
 
 ## System Tray
 
-When running as a daemon, nownow shows a system tray icon with:
+When running as a daemon, now shows a system tray icon with:
 
 - Current status display
 - Now playing music info
@@ -64,7 +64,7 @@ When running as a daemon, nownow shows a system tray icon with:
 
 ## Configuration
 
-Config lives at `~/.config/nownow/config.yml` (or `$XDG_CONFIG_HOME/nownow/config.yml`):
+Config lives at `~/.config/now/config.yml` (or `$XDG_CONFIG_HOME/now/config.yml`):
 
 ```yaml
 endpoint: https://opennow.dev
@@ -109,21 +109,21 @@ ignore:
   - "System Settings"
 ```
 
-The default config includes 40+ activity rules covering dev tools, browsers, design apps, communication, writing, media, and more. Run `nownow config` to customize.
+The default config includes 40+ activity rules covering dev tools, browsers, design apps, communication, writing, media, and more. Run `now config` to customize.
 
 ## Git Hooks
 
 Automatically push status on git events:
 
 ```bash
-nownow hook install                          # install post-commit hook
-nownow hook install --hooks post-commit,pre-push  # install multiple hooks
-nownow hook install --template "Shipped: {commit_msg}"  # custom message
-nownow hook list                             # list installed hooks
-nownow hook remove                           # remove all nownow hooks
+now hook install                          # install post-commit hook
+now hook install --hooks post-commit,pre-push  # install multiple hooks
+now hook install --template "Shipped: {commit_msg}"  # custom message
+now hook list                             # list installed hooks
+now hook remove                           # remove all now hooks
 ```
 
-Hooks are appended to existing hook files (never overwritten) and managed via `# nownow:start` / `# nownow:end` markers. Works with worktrees and submodules.
+Hooks are appended to existing hook files (never overwritten) and managed via `# now:start` / `# now:end` markers. Works with worktrees and submodules.
 
 **Default messages:**
 - `post-commit`: "Just committed: {commit_msg}"
@@ -134,10 +134,10 @@ Hooks are appended to existing hook files (never overwritten) and managed via `#
 Run any command and push its outcome as status:
 
 ```bash
-nownow wrap -- make build                   # "make completed" or "make failed (exit 2)"
-nownow wrap --name "Deploy" -- ./deploy.sh  # "Deploy completed"
-nownow wrap --on-success "Ship it!" --on-failure "Broke it ({exit_code})" -- make test
-nownow wrap --quiet -- backup.sh            # push without printing nownow output
+now wrap -- make build                   # "make completed" or "make failed (exit 2)"
+now wrap --name "Deploy" -- ./deploy.sh  # "Deploy completed"
+now wrap --on-success "Ship it!" --on-failure "Broke it ({exit_code})" -- make test
+now wrap --quiet -- backup.sh            # push without printing CLI output
 ```
 
 **Template variables:** `{cmd}`, `{name}`, `{exit_code}`, `{duration}`
@@ -147,7 +147,7 @@ The wrapped command's stdin/stdout/stderr are fully transparent, and its exit co
 ## Development
 
 ```bash
-go build -o nownow .
+go build -o now .
 go test ./...
 ```
 

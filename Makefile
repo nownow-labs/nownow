@@ -1,6 +1,6 @@
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
-LDFLAGS := -s -w -X github.com/nownow-labs/nownow/cmd.Version=$(VERSION)
-BINARY := nownow
+LDFLAGS := -s -w -X github.com/opennow-labs/now-cli/cmd.Version=$(VERSION)
+BINARY := now
 
 SWIFT_HELPER := nowplaying-helper
 SWIFT_SRC := internal/detect/nowplaying/main.swift

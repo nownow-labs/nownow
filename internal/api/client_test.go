@@ -21,7 +21,7 @@ func TestUserAgentTelemetryOn(t *testing.T) {
 	client.Telemetry = true
 	client.PushStatus(StatusRequest{Content: "test"})
 
-	if gotUA == "" || gotUA == "nownow/1.2.3" {
+	if gotUA == "" || gotUA == "now/1.2.3" {
 		t.Errorf("expected UA with os/arch, got %q", gotUA)
 	}
 	if gotUA == "" {
@@ -42,7 +42,7 @@ func TestUserAgentTelemetryOff(t *testing.T) {
 	client.Telemetry = false
 	client.PushStatus(StatusRequest{Content: "test"})
 
-	if gotUA != "nownow/1.2.3" {
+	if gotUA != "now/1.2.3" {
 		t.Errorf("expected UA without os/arch, got %q", gotUA)
 	}
 }

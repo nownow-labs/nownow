@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/nownow-labs/nownow/internal/config"
+	"github.com/opennow-labs/now-cli/internal/config"
 	"github.com/spf13/cobra"
 )
 

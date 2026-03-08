@@ -10,12 +10,12 @@ import (
 	"time"
 
 	"fyne.io/systray"
-	"github.com/nownow-labs/nownow/internal/api"
-	"github.com/nownow-labs/nownow/internal/config"
-	"github.com/nownow-labs/nownow/internal/detect"
-	"github.com/nownow-labs/nownow/internal/open"
-	"github.com/nownow-labs/nownow/internal/template"
-	"github.com/nownow-labs/nownow/internal/upgrade"
+	"github.com/opennow-labs/now-cli/internal/api"
+	"github.com/opennow-labs/now-cli/internal/config"
+	"github.com/opennow-labs/now-cli/internal/detect"
+	"github.com/opennow-labs/now-cli/internal/open"
+	"github.com/opennow-labs/now-cli/internal/template"
+	"github.com/opennow-labs/now-cli/internal/upgrade"
 )
 
 // Version is set by the caller before Run.
@@ -77,7 +77,7 @@ func onReady(interval time.Duration) {
 	// First arg = icon, second arg = selected icon
 	// For template to work, the PNG must be black + alpha only
 	systray.SetTemplateIcon(IconDark, IconDark)
-	systray.SetTooltip("nownow")
+	systray.SetTooltip("now")
 
 	mStatus = systray.AddMenuItem("starting...", "Current status")
 	mStatus.Disable()
@@ -98,7 +98,7 @@ func onReady(interval time.Duration) {
 	mUpdate.Hide()
 
 	systray.AddSeparator()
-	mQuit := systray.AddMenuItem("Quit", "Stop nownow")
+	mQuit := systray.AddMenuItem("Quit", "Quit")
 
 	// Initial push – if detection yields nothing, show "idle"
 	// so the menu never stays on "starting...".

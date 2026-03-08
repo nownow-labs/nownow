@@ -8,18 +8,18 @@ import (
 )
 
 const (
-	markerStart = "# nownow:start"
-	markerEnd   = "# nownow:end"
+	markerStart = "# now:start"
+	markerEnd   = "# now:end"
 	shebang     = "#!/bin/sh"
 )
 
 // DefaultTemplates maps hook names to their default push message templates.
 var DefaultTemplates = map[string]string{
-	"post-commit": `nownow push "Just committed: $(git log -1 --format=%s)"`,
-	"pre-push":    `nownow push "Pushing to $(git rev-parse --abbrev-ref HEAD)"`,
+	"post-commit": `now push "Just committed: $(git log -1 --format=%s)"`,
+	"pre-push":    `now push "Pushing to $(git rev-parse --abbrev-ref HEAD)"`,
 }
 
-// Install adds nownow hooks to the given git repository.
+// Install adds now hooks to the given git repository.
 // hooks is a list of hook names (e.g. ["post-commit", "pre-push"]).
 // templates overrides the default push command per hook (key = hook name).
 func Install(gitDir string, hooks []string, templates map[string]string) error {
@@ -88,7 +88,7 @@ func installOne(hookPath, pushCmd string) error {
 	return os.WriteFile(hookPath, []byte(content), 0o755)
 }
 
-// Remove uninstalls nownow hooks from the given git repository.
+// Remove uninstalls now hooks from the given git repository.
 func Remove(gitDir string) error {
 	hooksDir := filepath.Join(gitDir, "hooks")
 	entries, err := os.ReadDir(hooksDir)
@@ -134,7 +134,7 @@ func Remove(gitDir string) error {
 	return nil
 }
 
-// List returns the names of hooks that contain nownow blocks.
+// List returns the names of hooks that contain now blocks.
 func List(gitDir string) ([]string, error) {
 	hooksDir := filepath.Join(gitDir, "hooks")
 	entries, err := os.ReadDir(hooksDir)
@@ -229,5 +229,5 @@ func BuildTemplate(hookName, tmpl string) string {
 	msg := tmpl
 	msg = strings.ReplaceAll(msg, "{commit_msg}", "$(git log -1 --format=%s)")
 	msg = strings.ReplaceAll(msg, "{branch}", "$(git rev-parse --abbrev-ref HEAD)")
-	return fmt.Sprintf(`nownow push "%s"`, msg)
+	return fmt.Sprintf(`now push "%s"`, msg)
 }
