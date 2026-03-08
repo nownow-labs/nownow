@@ -55,7 +55,7 @@ func (c Config) AutoUpdateEnabled() bool {
 
 func DefaultConfig() Config {
 	return Config{
-		Endpoint: "https://now.ctx.st",
+		Endpoint: "https://opennow.dev",
 		Template: "{activity}",
 		Interval: "30s",
 		ActivityRules: []ActivityRule{
@@ -151,7 +151,7 @@ func Load() (Config, error) {
 
 	// Ensure defaults for empty fields
 	if cfg.Endpoint == "" {
-		cfg.Endpoint = "https://now.ctx.st"
+		cfg.Endpoint = "https://opennow.dev"
 	}
 	if cfg.Template == "" {
 		cfg.Template = "{activity}"

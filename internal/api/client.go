@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// Client handles HTTP communication with the now.ctx.st API.
+// Client handles HTTP communication with the opennow.dev API.
 type Client struct {
 	Endpoint     string
 	Token        string

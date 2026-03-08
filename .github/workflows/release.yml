@@ -135,7 +135,7 @@ jobs:
 
           FORMULA=$(cat <<RUBY
           class Nownow < Formula
-            desc "Keep your now.ctx.st status green"
+            desc "Keep your opennow.dev status green"
             homepage "https://github.com/nownow-labs/nownow"
             version "${VERSION}"
             license "MIT"

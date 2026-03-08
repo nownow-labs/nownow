@@ -90,7 +90,7 @@ func onReady(interval time.Duration) {
 
 	mPause = systray.AddMenuItem("Pause", "Pause auto-detection")
 	mSettings := systray.AddMenuItem("Settings...", "Open settings")
-	mBoard := systray.AddMenuItem("Open Board", "Open now.ctx.st in browser")
+	mBoard := systray.AddMenuItem("Open Board", "Open opennow.dev in browser")
 
 	systray.AddSeparator()
 
@@ -168,7 +168,7 @@ func onReady(interval time.Duration) {
 					}
 				}
 			case <-mBoard.ClickedCh:
-				open.URL("https://now.ctx.st")
+				open.URL("https://opennow.dev")
 			case <-mUpdate.ClickedCh:
 				go performUpgrade(checker)
 			case <-mQuit.ClickedCh:

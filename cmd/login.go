@@ -22,7 +22,7 @@ var tokenFlag string
 
 var loginCmd = &cobra.Command{
 	Use:   "login",
-	Short: "Authenticate with now.ctx.st",
+	Short: "Authenticate with opennow.dev",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if tokenFlag != "" {
 			return loginWithToken(tokenFlag)
@@ -83,7 +83,7 @@ func loginWithDeviceFlow() error {
 	if err != nil {
 		// Fall back to manual token entry
 		fmt.Fprintf(os.Stderr, "Device flow unavailable: %v\n", err)
-		fmt.Print("Paste your now.ctx.st token: ")
+		fmt.Print("Paste your opennow.dev token: ")
 		reader := bufio.NewReader(os.Stdin)
 		token, err := reader.ReadString('\n')
 		if err != nil {

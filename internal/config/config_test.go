@@ -9,8 +9,8 @@ import (
 func TestDefaultConfig(t *testing.T) {
 	cfg := DefaultConfig()
 
-	if cfg.Endpoint != "https://now.ctx.st" {
-		t.Errorf("expected endpoint https://now.ctx.st, got %s", cfg.Endpoint)
+	if cfg.Endpoint != "https://opennow.dev" {
+		t.Errorf("expected endpoint https://opennow.dev, got %s", cfg.Endpoint)
 	}
 	if cfg.Interval != "30s" {
 		t.Errorf("expected interval 30s, got %s", cfg.Interval)
@@ -156,8 +156,8 @@ func TestSaveAndLoad(t *testing.T) {
 	if loaded.Token != "now_test_token_123" {
 		t.Errorf("loaded token = %q, want %q", loaded.Token, "now_test_token_123")
 	}
-	if loaded.Endpoint != "https://now.ctx.st" {
-		t.Errorf("loaded endpoint = %q, want https://now.ctx.st", loaded.Endpoint)
+	if loaded.Endpoint != "https://opennow.dev" {
+		t.Errorf("loaded endpoint = %q, want https://opennow.dev", loaded.Endpoint)
 	}
 }
 
@@ -170,7 +170,7 @@ func TestLoadMissing(t *testing.T) {
 		t.Fatalf("Load missing: %v", err)
 	}
 	// Should return defaults
-	if cfg.Endpoint != "https://now.ctx.st" {
+	if cfg.Endpoint != "https://opennow.dev" {
 		t.Errorf("expected default endpoint, got %s", cfg.Endpoint)
 	}
 }
@@ -192,7 +192,7 @@ func TestLoadPartialConfig(t *testing.T) {
 		t.Errorf("token = %q, want now_partial", cfg.Token)
 	}
 	// Defaults should be filled in
-	if cfg.Endpoint != "https://now.ctx.st" {
+	if cfg.Endpoint != "https://opennow.dev" {
 		t.Errorf("endpoint not defaulted: %s", cfg.Endpoint)
 	}
 	if cfg.Interval != "30s" {

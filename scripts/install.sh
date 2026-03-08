@@ -17,7 +17,7 @@ esac
 
 case "$OS" in
   darwin|linux) ;;
-  *) echo "Unsupported OS: $OS — on Windows use: irm https://now.ctx.st/install.ps1 | iex"; exit 1 ;;
+  *) echo "Unsupported OS: $OS — on Windows use: irm https://opennow.dev/install.ps1 | iex"; exit 1 ;;
 esac
 
 # Resolve existing install location (follows symlinks, e.g. homebrew)

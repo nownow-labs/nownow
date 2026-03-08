@@ -6,8 +6,8 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "nownow",
-	Short: "Keep your now.ctx.st status green",
-	Long:  "nownow auto-detects your context and pushes status updates to now.ctx.st.",
+	Short: "Keep your opennow.dev status green",
+	Long:  "nownow auto-detects your context and pushes status updates to opennow.dev.",
 }
 
 // Execute runs the root command.

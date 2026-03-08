@@ -2,7 +2,7 @@
 
 Live presence for builders and their agents. You're not building alone.
 
-Keep your [now.ctx.st](https://now.ctx.st) status green without thinking about it.
+Keep your [opennow.dev](https://opennow.dev) status green without thinking about it.
 
 ## Install
 
@@ -59,7 +59,7 @@ When running as a daemon, nownow shows a system tray icon with:
 - Now playing music info
 - Pause / Resume auto-detection
 - Settings UI (opens in browser at `127.0.0.1:19191`)
-- Open Board (opens [now.ctx.st](https://now.ctx.st))
+- Open Board (opens [opennow.dev](https://opennow.dev))
 - Update notifications
 
 ## Configuration
@@ -67,7 +67,7 @@ When running as a daemon, nownow shows a system tray icon with:
 Config lives at `~/.config/nownow/config.yml` (or `$XDG_CONFIG_HOME/nownow/config.yml`):
 
 ```yaml
-endpoint: https://now.ctx.st
+endpoint: https://opennow.dev
 token: now_xxx
 
 # Status template — available: {app}, {title}, {music}, {music.artist}, {music.track}, {watching}, {activity}
