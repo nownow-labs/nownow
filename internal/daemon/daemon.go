@@ -171,8 +171,10 @@ func RunForeground(interval time.Duration) error {
 		tray.SettingsAvailable = true
 	}
 
-	// Launch systray — this blocks on the main thread
-	tray.Run(interval)
+	// Launch systray + settings window — this blocks on the main thread.
+	// Platform-specific: on macOS uses a native webview window for settings,
+	// on other platforms falls back to systray.Run with browser-based settings.
+	startTray(interval)
 	return nil
 }
 
