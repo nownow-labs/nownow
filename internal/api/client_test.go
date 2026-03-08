@@ -100,7 +100,7 @@ func TestVerifyToken(t *testing.T) {
 			w.WriteHeader(404)
 			return
 		}
-		w.Write([]byte(`{"user": {"id": 1, "name": "testuser"}}`))
+		w.Write([]byte(`{"user": {"id": 1, "username": "testuser", "displayName": "Test User"}}`))
 	}))
 	defer server.Close()
 
@@ -109,8 +109,11 @@ func TestVerifyToken(t *testing.T) {
 	if err != nil {
 		t.Fatalf("VerifyToken: %v", err)
 	}
-	if me.User.Name != "testuser" {
-		t.Errorf("name = %q, want %q", me.User.Name, "testuser")
+	if me.User.Username != "testuser" {
+		t.Errorf("username = %q, want %q", me.User.Username, "testuser")
+	}
+	if me.User.DisplayName != "Test User" {
+		t.Errorf("displayName = %q, want %q", me.User.DisplayName, "Test User")
 	}
 	if me.User.ID != 1 {
 		t.Errorf("id = %d, want 1", me.User.ID)
@@ -119,7 +122,7 @@ func TestVerifyToken(t *testing.T) {
 
 func TestGetLive(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{"feed": [{"id": 1, "name": "alice", "type": "human", "status": "coding", "emoji": "💻"}], "online_count": 1}`))
+		w.Write([]byte(`{"feed": [{"id": 1, "displayName": "Alice", "username": "alice", "type": "human", "status": "coding", "emoji": "💻"}], "online_count": 1}`))
 	}))
 	defer server.Close()
 
@@ -131,8 +134,11 @@ func TestGetLive(t *testing.T) {
 	if len(live.Feed) != 1 {
 		t.Fatalf("expected 1 entry, got %d", len(live.Feed))
 	}
-	if live.Feed[0].Name != "alice" {
-		t.Errorf("name = %q, want %q", live.Feed[0].Name, "alice")
+	if live.Feed[0].DisplayName != "Alice" {
+		t.Errorf("displayName = %q, want %q", live.Feed[0].DisplayName, "Alice")
+	}
+	if live.Feed[0].Username != "alice" {
+		t.Errorf("username = %q, want %q", live.Feed[0].Username, "alice")
 	}
 	if live.OnlineCount != 1 {
 		t.Errorf("online_count = %d, want 1", live.OnlineCount)
@@ -259,7 +265,7 @@ func TestPollDeviceToken_Success(t *testing.T) {
 		if body.DeviceCode != "abc123" {
 			t.Errorf("device_code = %q, want %q", body.DeviceCode, "abc123")
 		}
-		w.Write([]byte(`{"token":"now_deadbeef","user":{"id":1,"name":"testuser"}}`))
+		w.Write([]byte(`{"token":"now_deadbeef","user":{"id":1,"username":"testuser","displayName":"Test User"}}`))
 	}))
 	defer server.Close()
 
@@ -271,8 +277,11 @@ func TestPollDeviceToken_Success(t *testing.T) {
 	if resp.Token != "now_deadbeef" {
 		t.Errorf("Token = %q, want %q", resp.Token, "now_deadbeef")
 	}
-	if resp.User.Name != "testuser" {
-		t.Errorf("Name = %q, want %q", resp.User.Name, "testuser")
+	if resp.User.Username != "testuser" {
+		t.Errorf("Username = %q, want %q", resp.User.Username, "testuser")
+	}
+	if resp.User.DisplayName != "Test User" {
+		t.Errorf("DisplayName = %q, want %q", resp.User.DisplayName, "Test User")
 	}
 	if resp.User.ID != 1 {
 		t.Errorf("ID = %d, want 1", resp.User.ID)

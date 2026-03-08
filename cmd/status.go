@@ -53,6 +53,9 @@ var statusCmd = &cobra.Command{
 		if meErr != nil {
 			return fmt.Errorf("auth failed: %w", meErr)
 		}
+
+		fmt.Printf("%s (@%s) · %s/@%s\n", me.User.DisplayName, me.User.Username, cfg.Endpoint, me.User.Username)
+
 		if liveErr != nil {
 			return fmt.Errorf("fetching live status: %w", liveErr)
 		}

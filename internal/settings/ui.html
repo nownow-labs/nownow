@@ -864,7 +864,7 @@ async function pollLogin(deviceCode) {
       clearInterval(loginPollTimer);
       loginPollTimer = null;
       document.getElementById('loginFlow').style.display = 'none';
-      showToast('Logged in as ' + data.user_name);
+      showToast('Logged in as ' + data.user_display_name + ' (@' + data.user_username + ')');
       loadConfig();
     } else if (data.status === 'error') {
       clearInterval(loginPollTimer);

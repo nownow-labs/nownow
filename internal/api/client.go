@@ -59,19 +59,21 @@ type StatusRequest struct {
 // MeResponse is the response from GET /api/auth/me.
 type MeResponse struct {
 	User struct {
-		ID   int    `json:"id"`
-		Name string `json:"name"`
+		ID          int    `json:"id"`
+		Username    string `json:"username"`
+		DisplayName string `json:"displayName"`
 	} `json:"user"`
 }
 
 // LiveEntry represents an entity on the live view.
 type LiveEntry struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	Type       string `json:"type"`
-	Status     string `json:"status"`
-	Emoji      string `json:"emoji"`
-	LastSeenAt string `json:"lastSeenAt"`
+	ID          int    `json:"id"`
+	DisplayName string `json:"displayName"`
+	Username    string `json:"username"`
+	Type        string `json:"type"`
+	Status      string `json:"status"`
+	Emoji       string `json:"emoji"`
+	LastSeenAt  string `json:"lastSeenAt"`
 }
 
 // LiveResponse is the response from GET /api/status.
@@ -247,8 +249,9 @@ type DeviceCodeResponse struct {
 type DeviceTokenResponse struct {
 	Token string `json:"token"`
 	User  struct {
-		ID   int    `json:"id"`
-		Name string `json:"name"`
+		ID          int    `json:"id"`
+		Username    string `json:"username"`
+		DisplayName string `json:"displayName"`
 	} `json:"user"`
 }
 

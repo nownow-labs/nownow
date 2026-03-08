@@ -58,15 +58,14 @@ func loginWithToken(token string) error {
 		fmt.Println("failed")
 		return fmt.Errorf("token verification failed: %w", err)
 	}
-	fmt.Printf("ok (%s)\n", me.User.Name)
+	fmt.Println("ok")
+	fmt.Printf("Logged in as %s (@%s)\n", me.User.DisplayName, me.User.Username)
+	fmt.Printf("%s/@%s\n", cfg.Endpoint, me.User.Username)
 
 	cfg.Token = token
 	if err := config.Save(cfg); err != nil {
 		return fmt.Errorf("saving config: %w", err)
 	}
-
-	p, _ := config.Path()
-	fmt.Printf("Token saved to %s\n", p)
 
 	startDaemon()
 	return nil
@@ -151,7 +150,8 @@ func loginWithDeviceFlow() error {
 			return fmt.Errorf("saving config: %w", err)
 		}
 
-		fmt.Printf("Logged in as %s\n", tokenResp.User.Name)
+		fmt.Printf("Logged in as %s (@%s)\n", tokenResp.User.DisplayName, tokenResp.User.Username)
+		fmt.Printf("%s/@%s\n", cfg.Endpoint, tokenResp.User.Username)
 
 		startDaemon()
 		return nil

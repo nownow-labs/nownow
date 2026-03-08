@@ -403,8 +403,9 @@ func handleLoginPoll(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"status":    "ok",
-		"user_name": tokenResp.User.Name,
+		"status":       "ok",
+		"user_display_name": tokenResp.User.DisplayName,
+		"user_username": tokenResp.User.Username,
 	})
 }
 
