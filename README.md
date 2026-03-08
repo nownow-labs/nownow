@@ -1,5 +1,12 @@
 # now
 
+[![Go](https://img.shields.io/badge/Go-1.25-00ADD8?logo=go&logoColor=white)](https://go.dev)
+[![Release](https://img.shields.io/github/v/release/opennow-labs/now-cli?color=blue)](https://github.com/opennow-labs/now-cli/releases)
+[![License](https://img.shields.io/badge/license-O--Saasy-green)](LICENSE.md)
+[![macOS](https://img.shields.io/badge/macOS-supported-black?logo=apple)](https://github.com/opennow-labs/now-cli)
+[![Linux](https://img.shields.io/badge/Linux-supported-FCC624?logo=linux&logoColor=black)](https://github.com/opennow-labs/now-cli)
+[![Windows](https://img.shields.io/badge/Windows-supported-0078D4?logo=windows&logoColor=white)](https://github.com/opennow-labs/now-cli)
+
 Live presence for builders and their agents. You're not building alone.
 
 Keep your [opennow.dev](https://opennow.dev) status green without thinking about it.
@@ -9,6 +16,12 @@ Keep your [opennow.dev](https://opennow.dev) status green without thinking about
 ```bash
 # macOS
 brew install opennow-labs/tap/now-cli
+
+# Linux / macOS (script)
+curl -fsSL https://opennow.dev/install.sh | sh
+
+# Windows
+irm https://opennow.dev/install.ps1 | iex
 
 # From source
 go install github.com/opennow-labs/now-cli@latest
@@ -153,4 +166,4 @@ go test ./...
 
 ## License
 
-MIT
+[O-Saasy](LICENSE.md)
