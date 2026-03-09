@@ -48,12 +48,15 @@ func (c *Client) userAgent() string {
 
 // StatusRequest is the body for POST /api/status.
 type StatusRequest struct {
-	Content     string `json:"content"`
-	App         string `json:"app,omitempty"`
-	Activity    string `json:"activity,omitempty"`
-	MusicArtist string `json:"music_artist,omitempty"`
-	MusicTrack  string `json:"music_track,omitempty"`
-	Watching    string `json:"watching,omitempty"`
+	Content       string `json:"content"`
+	App           string `json:"app,omitempty"`
+	Activity      string `json:"activity,omitempty"`
+	MusicArtist   string `json:"music_artist,omitempty"`
+	MusicTrack    string `json:"music_track,omitempty"`
+	Watching      string `json:"watching,omitempty"`
+	Platform      string `json:"platform,omitempty"`
+	Timezone      string `json:"timezone,omitempty"`
+	ClientVersion string `json:"client_version,omitempty"`
 }
 
 // MeResponse is the response from GET /api/auth/me.

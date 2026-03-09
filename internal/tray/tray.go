@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"runtime"
 	"sync"
 	"time"
 
@@ -306,12 +307,15 @@ func pushAndUpdate() {
 	client.SendMusic = cfg.SendMusicEnabled()
 	client.SendWatching = cfg.SendWatchingEnabled()
 	err = client.PushStatus(api.StatusRequest{
-		Content:     content,
-		App:         ctx.App,
-		Activity:    activity,
-		MusicArtist: ctx.MusicArtist,
-		MusicTrack:  ctx.MusicTrack,
-		Watching:    ctx.Watching,
+		Content:       content,
+		App:           ctx.App,
+		Activity:      activity,
+		MusicArtist:   ctx.MusicArtist,
+		MusicTrack:    ctx.MusicTrack,
+		Watching:      ctx.Watching,
+		Platform:      fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
+		Timezone:      localTimezone(),
+		ClientVersion: Version,
 	})
 	if err != nil {
 		var rle *api.RateLimitError
@@ -327,6 +331,17 @@ func pushAndUpdate() {
 
 	slog.Debug("push ok", "app", rawApp, "activity", activity, "content", content)
 	updateStatus(content, music)
+}
+
+// localTimezone returns the IANA timezone name (e.g. "Asia/Shanghai").
+// Falls back to "UTC+8" style if the system returns "Local".
+func localTimezone() string {
+	if loc := time.Now().Location().String(); loc != "Local" {
+		return loc
+	}
+	_, offset := time.Now().Zone()
+	h := offset / 3600
+	return fmt.Sprintf("UTC%+d", h)
 }
 
 func updateStatus(status, music string) {
