@@ -58,14 +58,14 @@ func runUninstall(cmd *cobra.Command, args []string) error {
 	}
 
 	// 1. Stop daemon
-	if err := daemon.Stop(); err != nil {
-		if strings.Contains(err.Error(), "not running") {
-			fmt.Fprintln(os.Stderr, "✓ daemon not running")
-		} else {
-			return fmt.Errorf("stopping daemon: %w", err)
-		}
-	} else {
+	stopped, err := daemon.Stop()
+	if err != nil {
+		return fmt.Errorf("stopping daemon: %w", err)
+	}
+	if stopped {
 		fmt.Fprintln(os.Stderr, "✓ daemon stopped")
+	} else {
+		fmt.Fprintln(os.Stderr, "✓ daemon not running")
 	}
 
 	// 2. Remove autostart

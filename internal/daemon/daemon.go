@@ -89,6 +89,15 @@ func RemovePid() {
 // otherwise falls back to StartDetached. If installAutostart is true and no
 // service manager is active, it also installs autostart for future logins.
 func StartDaemon(installAutostart bool) error {
+	// Fail fast if not logged in — avoids spawning a process that dies immediately.
+	cfg, err := config.Load()
+	if err != nil {
+		return fmt.Errorf("loading config: %w", err)
+	}
+	if !cfg.HasToken() {
+		return fmt.Errorf("not logged in — run: now login")
+	}
+
 	// Try platform service manager first (launchd on macOS, no-op elsewhere)
 	managed, err := startViaServiceManager()
 	if err != nil {
@@ -113,38 +122,40 @@ func StartDaemon(installAutostart bool) error {
 // Stop stops the running daemon. On macOS, it uses launchd bootout when the
 // service is managed by launchd, which prevents KeepAlive from restarting it.
 // Falls back to SIGTERM for manually started processes.
-func Stop() error {
+// Returns (true, nil) if a daemon was actually stopped, (false, nil) if
+// nothing was running, or (false, err) on failure.
+func Stop() (stopped bool, err error) {
 	running, pid := IsRunning()
 
 	// Try service manager first — it may be managing the process even if
 	// the PID file is missing (e.g. crash during throttled restart).
 	managed, err := stopViaServiceManager()
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	if !managed && !running {
-		return fmt.Errorf("daemon is not running")
+		return false, nil
 	}
 
 	if managed {
 		// Bootout succeeded; wait for the process to exit if we can find it.
 		if running {
-			return waitForExit(pid)
+			return true, waitForExit(pid)
 		}
 		fmt.Println("service unloaded from launchd")
-		return nil
+		return true, nil
 	}
 
 	// Fallback: send SIGTERM directly (manually started / non-macOS)
 	process, err := os.FindProcess(pid)
 	if err != nil {
-		return err
+		return false, err
 	}
 	if err := process.Signal(syscall.SIGTERM); err != nil {
-		return fmt.Errorf("failed to stop daemon (pid %d): %w", pid, err)
+		return false, fmt.Errorf("failed to stop daemon (pid %d): %w", pid, err)
 	}
-	return waitForExit(pid)
+	return true, waitForExit(pid)
 }
 
 // waitForExit polls until the process with the given PID exits (up to 5 seconds).

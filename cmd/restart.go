@@ -7,9 +7,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var stopCmd = &cobra.Command{
-	Use:   "stop",
-	Short: "Stop the now daemon",
+var restartCmd = &cobra.Command{
+	Use:   "restart",
+	Short: "Restart the now daemon",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		stopped, err := daemon.Stop()
 		if err != nil {
@@ -18,10 +18,10 @@ var stopCmd = &cobra.Command{
 		if stopped {
 			fmt.Println("daemon stopped")
 		}
-		return nil
+		return daemon.StartDaemon(true)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(stopCmd)
+	rootCmd.AddCommand(restartCmd)
 }

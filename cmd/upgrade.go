@@ -54,12 +54,16 @@ var upgradeCmd = &cobra.Command{
 		if running, _ := daemon.IsRunning(); running {
 			if upgradeRestart {
 				fmt.Println("Restarting daemon...")
-				if err := daemon.Stop(); err != nil {
+				stopped, err := daemon.Stop()
+				if err != nil {
 					return fmt.Errorf("stopping daemon: %w", err)
 				}
-				return daemon.StartDetached()
+				if stopped {
+					fmt.Println("daemon stopped")
+				}
+				return daemon.StartDaemon(true)
 			}
-			fmt.Println("Daemon is running. Restart to apply: now stop && now start")
+			fmt.Println("Daemon is running. Restart to apply: now restart")
 		}
 
 		return nil

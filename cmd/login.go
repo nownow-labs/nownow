@@ -161,13 +161,10 @@ func loginWithDeviceFlow() error {
 func startDaemon() {
 	// Stop existing daemon if running (may have old token)
 	if running, _ := daemon.IsRunning(); running {
-		daemon.Stop()
+		_, _ = daemon.Stop()
 	}
 
-	if err := daemon.StartDetached(); err != nil {
-		return
-	}
-	daemon.InstallAutostart()
+	daemon.StartDaemon(true) //nolint:errcheck // best-effort after login
 }
 
 // waitWithContext waits for the given duration or until the context is cancelled.

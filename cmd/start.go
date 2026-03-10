@@ -25,9 +25,6 @@ var startCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("loading config: %w", err)
 		}
-		if !cfg.HasToken() {
-			return fmt.Errorf("not logged in — run: now login")
-		}
 
 		intervalStr := startInterval
 		if intervalStr == "" {
@@ -40,6 +37,9 @@ var startCmd = &cobra.Command{
 
 		if startForeground {
 			// Run in foreground (used by detached process and launchd)
+			if !cfg.HasToken() {
+				return fmt.Errorf("not logged in — run: now login")
+			}
 			tray.Version = Version
 			tray.RestartFunc = daemon.Restart
 			return daemon.RunForeground(interval)

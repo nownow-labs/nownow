@@ -97,7 +97,6 @@ func InstallAutostart() error {
 		}
 	}
 
-	fmt.Printf("autostart installed: %s\n", plistPath())
 	return nil
 }
 

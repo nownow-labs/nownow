@@ -78,8 +78,11 @@ func TestStopWhenNotRunning(t *testing.T) {
 	tmpDir := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", tmpDir)
 
-	err := Stop()
-	if err == nil {
-		t.Error("Stop should error when not running")
+	stopped, err := Stop()
+	if err != nil {
+		t.Errorf("Stop should not error when not running, got: %v", err)
+	}
+	if stopped {
+		t.Error("Stop should report stopped=false when nothing was running")
 	}
 }
