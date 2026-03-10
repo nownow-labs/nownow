@@ -16,9 +16,9 @@ func TestBackgroundCheckerNotifies(t *testing.T) {
 	}))
 	defer server.Close()
 
-	origURL := releasesURL
+	origURLs := releaseURLs
 	setReleasesURL(server.URL)
-	defer setReleasesURL(origURL)
+	defer func() { releaseURLs = origURLs }()
 
 	var called atomic.Int32
 	checker := NewBackgroundChecker("0.1.0", func(r *Release) {
@@ -47,9 +47,9 @@ func TestBackgroundCheckerNoUpdateWhenCurrent(t *testing.T) {
 	}))
 	defer server.Close()
 
-	origURL := releasesURL
+	origURLs := releaseURLs
 	setReleasesURL(server.URL)
-	defer setReleasesURL(origURL)
+	defer func() { releaseURLs = origURLs }()
 
 	var called atomic.Int32
 	checker := NewBackgroundChecker("1.0.0", func(r *Release) {
@@ -70,9 +70,9 @@ func TestBackgroundCheckerDeduplicates(t *testing.T) {
 	}))
 	defer server.Close()
 
-	origURL := releasesURL
+	origURLs := releaseURLs
 	setReleasesURL(server.URL)
-	defer setReleasesURL(origURL)
+	defer func() { releaseURLs = origURLs }()
 
 	var called atomic.Int32
 	checker := NewBackgroundChecker("1.0.0", func(r *Release) {

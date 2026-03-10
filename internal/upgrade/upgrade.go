@@ -17,10 +17,13 @@ import (
 	"time"
 )
 
-var releasesURL = "https://api.github.com/repos/opennow-labs/now-cli/releases/latest"
+var releaseURLs = []string{
+	"https://opennow.dev/api/cli/release/latest",
+	"https://api.github.com/repos/opennow-labs/now-cli/releases/latest",
+}
 
 func setReleasesURL(url string) {
-	releasesURL = url
+	releaseURLs = []string{url}
 }
 
 type Release struct {
@@ -35,14 +38,26 @@ type Asset struct {
 
 func CheckLatest() (*Release, error) {
 	client := &http.Client{Timeout: 10 * time.Second}
-	resp, err := client.Get(releasesURL)
+	var lastErr error
+	for _, url := range releaseURLs {
+		release, err := fetchRelease(client, url)
+		if err == nil {
+			return release, nil
+		}
+		lastErr = err
+	}
+	return nil, lastErr
+}
+
+func fetchRelease(client *http.Client, url string) (*Release, error) {
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("checking latest release: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("GitHub API returned %d", resp.StatusCode)
+		return nil, fmt.Errorf("release API returned %d (%s)", resp.StatusCode, url)
 	}
 
 	var release Release
@@ -118,7 +133,7 @@ func FindAsset(release *Release) (*Asset, error) {
 }
 
 func Download(asset *Asset, destPath string) error {
-	client := &http.Client{Timeout: 60 * time.Second}
+	client := &http.Client{Timeout: 120 * time.Second}
 	resp, err := client.Get(asset.BrowserDownloadURL)
 	if err != nil {
 		return fmt.Errorf("downloading: %w", err)

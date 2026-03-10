@@ -102,9 +102,9 @@ func TestCheckLatest(t *testing.T) {
 	}))
 	defer server.Close()
 
-	origURL := releasesURL
+	origURLs := releaseURLs
 	setReleasesURL(server.URL)
-	defer setReleasesURL(origURL)
+	defer func() { releaseURLs = origURLs }()
 
 	release, err := CheckLatest()
 	if err != nil {
@@ -121,9 +121,9 @@ func TestCheckLatestHTTPError(t *testing.T) {
 	}))
 	defer server.Close()
 
-	origURL := releasesURL
+	origURLs := releaseURLs
 	setReleasesURL(server.URL)
-	defer setReleasesURL(origURL)
+	defer func() { releaseURLs = origURLs }()
 
 	_, err := CheckLatest()
 	if err == nil {
