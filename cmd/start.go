@@ -7,6 +7,7 @@ import (
 	"github.com/opennow-labs/now-cli/internal/config"
 	"github.com/opennow-labs/now-cli/internal/daemon"
 	"github.com/opennow-labs/now-cli/internal/tray"
+
 	"github.com/spf13/cobra"
 )
 
@@ -44,20 +45,7 @@ var startCmd = &cobra.Command{
 			return daemon.RunForeground(interval)
 		}
 
-		// Launch as background daemon
-		if err := daemon.StartDetached(); err != nil {
-			return err
-		}
-
-		// Install autostart on first run
-		if !startNoAutostart {
-			if err := daemon.InstallAutostart(); err != nil {
-				// Non-fatal — just warn
-				fmt.Printf("note: autostart setup skipped (%s)\n", err)
-			}
-		}
-
-		return nil
+		return daemon.StartDaemon(!startNoAutostart)
 	},
 }
 

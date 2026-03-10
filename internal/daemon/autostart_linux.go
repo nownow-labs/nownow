@@ -57,6 +57,24 @@ func InstallAutostart() error {
 	return nil
 }
 
+// BootoutService is a no-op on Linux (launchd is macOS-only).
+func BootoutService() error { return nil }
+
+// BootstrapService is a no-op on Linux (launchd is macOS-only).
+func BootstrapService() error { return nil }
+
+// IsServiceLoaded always returns false on Linux.
+func IsServiceLoaded() bool { return false }
+
+// launchdRestart is a no-op on Linux.
+func launchdRestart() error { return fmt.Errorf("launchd not available on Linux") }
+
+// startViaServiceManager is a no-op on Linux — no service manager integration.
+func startViaServiceManager() (bool, error) { return false, nil }
+
+// stopViaServiceManager is a no-op on Linux.
+func stopViaServiceManager() (bool, error) { return false, nil }
+
 // UninstallAutostart removes the .desktop autostart entry.
 func UninstallAutostart() error {
 	p, err := autostartPath()

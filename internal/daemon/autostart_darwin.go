@@ -28,7 +28,10 @@ var launchdPlist = `<?xml version="1.0" encoding="UTF-8"?>
   <key>RunAtLoad</key>
   <true/>
   <key>KeepAlive</key>
-  <true/>
+  <dict>
+    <key>SuccessfulExit</key>
+    <false/>
+  </dict>
   <key>StandardOutPath</key>
   <string>{{.LogDir}}/now.log</string>
   <key>StandardErrorPath</key>
@@ -114,6 +117,106 @@ func isServiceLoaded() bool {
 	return exec.Command("launchctl", "print", domain+"/"+launchdLabel).Run() == nil
 }
 
+// BootoutService unloads the service from launchd without deleting the plist.
+// The service can be re-loaded later via BootstrapService or on next login.
+func BootoutService() error {
+	if !isServiceLoaded() {
+		return nil
+	}
+	domain, err := guiDomain()
+	if err != nil {
+		return fmt.Errorf("getting gui domain: %w", err)
+	}
+	if err := exec.Command("launchctl", "bootout", domain+"/"+launchdLabel).Run(); err != nil {
+		return fmt.Errorf("launchctl bootout: %w", err)
+	}
+	return nil
+}
+
+// BootstrapService loads an existing plist into launchd.
+func BootstrapService() error {
+	if isServiceLoaded() {
+		return nil
+	}
+	domain, err := guiDomain()
+	if err != nil {
+		return fmt.Errorf("getting gui domain: %w", err)
+	}
+	if err := exec.Command("launchctl", "bootstrap", domain, plistPath()).Run(); err != nil {
+		return fmt.Errorf("launchctl bootstrap: %w", err)
+	}
+	return nil
+}
+
+// IsServiceLoaded returns true if the launchd service is currently loaded.
+func IsServiceLoaded() bool {
+	return isServiceLoaded()
+}
+
+// launchdRestart spawns a detached subprocess that does bootout+bootstrap.
+// This must be detached because bootout sends SIGTERM to the caller process.
+// Uses environment variables instead of shell interpolation to avoid escaping issues.
+func launchdRestart() error {
+	domain, err := guiDomain()
+	if err != nil {
+		return err
+	}
+	target := domain + "/" + launchdLabel
+	plist := plistPath()
+
+	// Pass arguments via env vars to avoid shell escaping issues with paths.
+	cmd := exec.Command("/bin/sh", "-c",
+		`/bin/launchctl bootout "$LAUNCHD_TARGET" && sleep 1 && /bin/launchctl bootstrap "$LAUNCHD_DOMAIN" "$LAUNCHD_PLIST"`,
+	)
+	cmd.Env = append(os.Environ(),
+		"LAUNCHD_TARGET="+target,
+		"LAUNCHD_DOMAIN="+domain,
+		"LAUNCHD_PLIST="+plist,
+	)
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+	cmd.Stdin = nil
+	cmd.SysProcAttr = detachedProcAttr()
+	return cmd.Start()
+}
+
+// startViaServiceManager tries to start/ensure the daemon via launchd.
+// Returns (true, nil) if launchd is now managing the daemon.
+// Returns (false, nil) if launchd is not available and caller should fall back.
+func startViaServiceManager() (managed bool, err error) {
+	if isServiceLoaded() {
+		if running, pid := IsRunning(); running {
+			return true, fmt.Errorf("daemon already running (pid %d), managed by launchd", pid)
+		}
+		// Service loaded but process not running — launchd will restart it
+		fmt.Println("daemon is managed by launchd and will restart automatically")
+		return true, nil
+	}
+
+	// Plist exists or first install — update plist and bootstrap
+	if err := InstallAutostart(); err != nil {
+		return false, nil // can't install, let caller fall back
+	}
+	if isServiceLoaded() {
+		fmt.Println("daemon started via launchd")
+		return true, nil
+	}
+	// Bootstrap failed (SSH, CI, etc.) — let caller fall back to StartDetached
+	return false, nil
+}
+
+// stopViaServiceManager unloads the service from launchd if loaded.
+// Returns true if launchd was managing the service and bootout was performed.
+func stopViaServiceManager() (bool, error) {
+	if !IsAutostartInstalled() || !isServiceLoaded() {
+		return false, nil
+	}
+	if err := BootoutService(); err != nil {
+		return true, fmt.Errorf("bootout failed: %w", err)
+	}
+	return true, nil
+}
+
 // UninstallAutostart removes the launchd plist.
 func UninstallAutostart() error {
 	p := plistPath()
@@ -121,12 +224,7 @@ func UninstallAutostart() error {
 		return nil
 	}
 	// Unload the service from launchd before removing the plist.
-	if isServiceLoaded() {
-		domain, err := guiDomain()
-		if err == nil {
-			_ = exec.Command("launchctl", "bootout", domain+"/"+launchdLabel).Run()
-		}
-	}
+	_ = BootoutService()
 	if err := os.Remove(p); err != nil {
 		return err
 	}
